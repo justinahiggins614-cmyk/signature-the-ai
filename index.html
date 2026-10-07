@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>&#10033; The Signature AI</title>
+<title>&#10033; The Signature AI 2.0</title>
 <meta name="description" content="The Signature AI: Manon's flagship Signature-version AI. Free-flowing chat, tools, and self-filing project history.">
 <style>
 *{box-sizing:border-box}html,body{height:100%}
@@ -56,8 +56,9 @@ header.topbar h1 .ast{color:#ffb300}
 </head>
 <body>
 <header class="topbar">
-<h1><span class="ast">&#10033;</span> The Signature AI</h1>
+<h1><span class="ast">&#10033;</span> The Signature AI 2.0</h1>
 <button class="tbtn gold" onclick="formalizeActive()" title="Compile this chat into a polished filed document">&#10033; Formalize &amp; Save</button>
+<button class="tbtn" onclick="openStdView()">&#10033; Standard</button>
 <button class="tbtn" onclick="toggleDrawer('hist',true)">History</button>
 <button class="tbtn" onclick="toggleDrawer('set',true)">&#9881;</button>
 <button class="tbtn" onclick="newChat()">+ New</button>
@@ -66,6 +67,19 @@ header.topbar h1 .ast{color:#ffb300}
 <div class="composer"><div class="row">
 <input id="qin" type="text" placeholder="Message The Signature AI&hellip;" aria-label="Message The Signature AI" autocomplete="off">
 <button id="qsend" onclick="sendMsg()">Send</button>
+</div></div>
+<div class="drawer" id="d-std" style="width:min(560px,94vw)" aria-label="Llama Standard 1.0">
+<h3>&#10033; Llama Standard 1.0 <span class="note">— on-device, works like the 2.0 site</span>
+<button class="tbtn" style="float:right" onclick="closeDrawers()">Close</button></h3>
+<div class="dbody">
+<div><span class="rolechip" onclick="stdRole('#Task-Movie-Expert')">#Task-Movie-Expert</span>
+<span class="rolechip" onclick="stdRole('#Task-Chef')">#Task-Chef</span>
+<span class="rolechip" onclick="stdRole('#Assume-Role-Tutor')">#Assume-Role-Tutor</span></div>
+<div id="stdrolebanner" class="note" style="display:none;margin-top:8px"></div>
+<div style="display:flex;gap:8px;margin-top:10px">
+<input id="stdq" class="tin" placeholder="Ask Standard… (try: define serendipity · 12*8+3 · are you an ai)" aria-label="Ask Llama Standard">
+<button class="btn" onclick="stdAsk()">Ask</button></div>
+<div id="stdout" class="stdbox note">Words, math, roles — live on your phone, no key needed.</div>
 </div></div>
 <div class="scrim" id="scrim" onclick="closeDrawers()"></div>
 <aside class="drawer" id="d-hist" aria-label="Filed history">
@@ -85,12 +99,10 @@ header.topbar h1 .ast{color:#ffb300}
 <p class="note"><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">Get a free Groq key &rarr;</a><br><span id="keystate"></span></p>
 </div>
 <div class="field">
-<label>LLAMA STANDARD 1.0 — on-device (no key)</label>
-<div class="stdbox">
-<div><span class="rolechip" onclick="stdRole('#Task-Chef')">#Task-Chef</span><span class="rolechip" onclick="stdRole('#Assume-Role-Tutor')">#Assume-Role-Tutor</span></div>
-<div style="display:flex;gap:8px;margin-top:8px"><input id="stdq" class="tin" placeholder="Ask Standard..."><button class="btn" onclick="stdAsk()">Ask</button></div>
-<div id="stdout" class="note">Words, math, roles — all on your phone.</div>
-</div>
+<label>APEX MODEL — every model your key can reach, in one place</label>
+<select id="modelpick" class="tin" onchange="ApexAI.setModel(this.value);renderModelLine();"></select>
+<div style="margin-top:8px"><button class="btn ghost" onclick="loadModelPick()">Re-detect models</button></div>
+<p class="note" id="modelline"></p>
 </div>
 <div class="field">
 <label>WHAT APEX CAN DO</label>
@@ -100,7 +112,7 @@ header.topbar h1 .ast{color:#ffb300}
 </aside>
 <nav class="jahnet" aria-label="The JAH Network">
 <div class="jahnet-title">THE JAH NETWORK</div>
-<div class="jahnet-list"><a href="https://justinahiggins614-cmyk.github.io/signature-math">1 Signature Math</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-calculator">2 Calculator</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary">3 Dictionary</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-wiki">4 JAH Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks">5 JAH-N Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama">6 Llama</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models">7 Phone Book</a> · <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog">8 Patents</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Specs</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems">10 PCs</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-books">11 Books</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-comics">12 Comics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-newspapers">13 News</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-backend">14 Mix Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators">15 Generators</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab">16 AI Mix</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics">17 Olympics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker">18 Chips</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-app-archive">19 Apps</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher">20 Robots</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver">21 Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker">22 Pixel</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker">23 Music</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-fixit">24 Fix-It</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-university">25 University</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-earth">26 Earth</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-flight-school">27 Flight</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-game-store">28 Games</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-website-creator">29 Sites</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-antivirus">30 Antivirus</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-os-updater">31 OS Updater</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-space-mapping">32 Space</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cookbook">33 Cookbook</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-spell-check">34 Spell Check</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-image-grid-measure">35 Grid Measure</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall">36 Cyber Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-3d-print">37 3D Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-the-ai">39 The Signature AI</a></div>
+<div class="jahnet-list"><a href="https://justinahiggins614-cmyk.github.io/signature-math">1 Signature Math</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-calculator">2 Calculator</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary">3 Dictionary</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-wiki">4 JAH Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks">5 JAH-N Wiki Leaks</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama">6 Llama</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models">7 Phone Book</a> · <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog">8 Patents</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Specs</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems">10 PCs</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-books">11 Books</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-comics">12 Comics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-newspapers">13 News</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-backend">14 Mix Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators">15 Generators</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab">16 AI Mix</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics">17 Olympics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker">18 Chips</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-app-archive">19 Apps</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher">20 Robots</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver">21 Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker">22 Pixel</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker">23 Music</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-fixit">24 Fix-It</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-university">25 University</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-earth">26 Earth</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-flight-school">27 Flight</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-game-store">28 Games</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-website-creator">29 Sites</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-antivirus">30 Antivirus</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-os-updater">31 OS Updater</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-space-mapping">32 Space</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cookbook">33 Cookbook</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-spell-check">34 Spell Check</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-image-grid-measure">35 Grid Measure</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall">36 Cyber Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-3d-print">37 3D Mall</a></div>
 <div class="jahnet-here">&#10033; The Signature AI &mdash; YOU ARE HERE</div>
 </nav>
 <script>
@@ -259,6 +271,7 @@ function askLlama(){
     }
   }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }
 }
+/* Apex AI engine 2.0 - model auto-detect, tool calling, key on device only. */
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
   var MODEL = 'llama-3.3-70b-versatile';
@@ -466,12 +479,32 @@ function toggleDrawer(which, open){
   closeDrawers();
   if(open){ document.getElementById(which==='hist'?'d-hist':'d-set').classList.add('open');
     document.getElementById('scrim').classList.add('on');
-    if(which==='hist') renderHist(); if(which==='set') renderKeyBox(); }
+    if(which==='hist') renderHist(); if(which==='set'){ renderKeyBox(); loadModelPick(); } }
 }
 function closeDrawers(){
-  document.getElementById('d-hist').classList.remove('open');
-  document.getElementById('d-set').classList.remove('open');
+  ['d-hist','d-set','d-std'].forEach(function(id){ var d=document.getElementById(id); if(d) d.classList.remove('open'); });
   document.getElementById('scrim').classList.remove('on');
+}
+function openStdView(){
+  closeDrawers();
+  document.getElementById('d-std').classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+}
+function loadModelPick(){
+  var sel=document.getElementById('modelpick'); if(!sel) return;
+  sel.innerHTML='<option>detecting…</option>';
+  if(!ApexAI.hasKey()){ sel.innerHTML='<option value="auto">add your key first</option>'; renderModelLine(); return; }
+  ApexAI.listModels().then(function(ids){
+    var cur=ApexAI.currentModel();
+    var h='<option value="auto">Auto — biggest available (recommended)</option>';
+    ids.forEach(function(id){ h+='<option value="'+esc(id)+'"'+(cur===id?' selected':'')+'>'+esc(id)+'</option>'; });
+    sel.innerHTML=h; renderModelLine();
+  }).catch(function(){ sel.innerHTML='<option value="auto">Auto (detect failed — try Re-detect)</option>'; renderModelLine(); });
+}
+function renderModelLine(){
+  var m=document.getElementById('modelline'); if(!m) return;
+  var c=ApexAI.currentModel();
+  m.textContent=(c&&c!=='auto')?('Using: '+c):'Using: auto-detect (biggest model your key can reach)';
 }
 function renderHist(){
   var box=document.getElementById('histlist'); var cs=loadConvos();
@@ -584,7 +617,9 @@ function saveKey(){
   bubble('sys','\u2733 Apex activated. Talk to me.');
 }
 var LOCKED_ROLE=null;
-function stdRole(t){ LOCKED_ROLE=t; }
+function stdRole(t){ LOCKED_ROLE=t;
+  var b=document.getElementById('stdrolebanner');
+  if(b){ b.style.display='block'; b.textContent='\uD83D\uDD12 ROLE LOCKED: '+t+' — stays locked until you change it.'; } }
 function stdAsk(){
   var q=document.getElementById('stdq').value.trim(); if(!q) return;
   document.getElementById('stdq').value='';
