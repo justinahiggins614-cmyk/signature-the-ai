@@ -272,9 +272,44 @@ function askLlama(){
   }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }
 }
 /* Apex AI engine 2.0 - model auto-detect, tool calling, key on device only. */
+/* Apex AI engine 2.0 - model auto-detect, tool calling, key on device only. */
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
-  var MODEL = 'llama-3.3-70b-versatile';
+  var MODEL_KEY = 'sig_apex_model';
+  var MODEL = null; /* resolved at runtime */
+  var PREFER = ['llama-3.3-70b-versatile','llama-3.1-70b-versatile','openai/gpt-oss-120b',
+    'qwen/qwen3-32b','qwen/qwen3.8-27b','meta-llama/llama-4-scout-17b-16e-instruct',
+    'meta-llama/llama-4-maverick-17b-128e-instruct','openai/gpt-oss-20b',
+    'llama-3.1-8b-instant','gemma2-9b-it','llama3-70b-8192','llama3-8b-8192'];
+  function chatModels(ids){
+    return ids.filter(function(id){
+      var l=id.toLowerCase();
+      return !/whisper|tts|prompt-guard|embed|moderation|vision|image|audio|tool-use$/.test(l);
+    });
+  }
+  function pickBest(ids){
+    var avail=chatModels(ids);
+    for(var i=0;i<PREFER.length;i++) if(avail.indexOf(PREFER[i])>=0) return PREFER[i];
+    return avail[0]||null;
+  }
+  function storedModel(){ try{ return localStorage.getItem(MODEL_KEY)||'auto'; }catch(e){ return 'auto'; } }
+  function listModels(){
+    return fetch('https://api.groq.com/openai/v1/models',{headers:{'Authorization':'Bearer '+ApexAI.key()}})
+      .then(function(r){ if(!r.ok) throw new Error('models'+r.status); return r.json(); })
+      .then(function(d){ return chatModels((d.data||[]).map(function(m){return m.id;})); });
+  }
+  function resolveModel(){
+    var st=storedModel();
+    if(st && st!=='auto') return Promise.resolve(st);
+    return listModels().then(function(ids){
+      var best=pickBest(ids);
+      if(!best) throw new Error('nomodel');
+      MODEL=best; return best;
+    });
+  }
+  function modelNotFoundMsg(d){
+    try{ return /model/i.test(d.error.message||''); }catch(e){ return false; }
+  }
   var API = 'https://api.groq.com/openai/v1/chat/completions';
   var NET = 'https://justinahiggins614-cmyk.github.io';
   var hist = []; /* {role, content} — this session */
@@ -350,17 +385,26 @@ var ApexAI = (function () {
     return Promise.resolve('unknown tool: ' + name);
   }
 
-  function groq(messages, tools) {
-    return fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
-      body: JSON.stringify({ model: MODEL, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
-    }).then(function (r) {
-      if (r.status === 401) throw new Error('badkey');
-      if (r.status === 429) throw new Error('ratelimit');
-      if (!r.ok) throw new Error('api' + r.status);
-      return r.json();
-    }, function () { throw new Error('netfail'); });
+  function groq(messages, tools, retried) {
+    function doCall(model){
+      MODEL=model;
+      return fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+        body: JSON.stringify({ model: model, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
+      }).then(function (r) {
+        if (r.status === 401) throw new Error('badkey');
+        if (r.status === 429) throw new Error('ratelimit');
+        if (!r.ok) return r.json().then(function(d){
+          if(!retried && modelNotFoundMsg(d)){ try{localStorage.removeItem(MODEL_KEY);}catch(e){}
+            return resolveModel().then(function(m2){ return groq(messages, tools, true); }); }
+          throw new Error('api'+r.status);
+        }, function(){ throw new Error('api'+r.status); });
+        return r.json();
+      }, function () { throw new Error('netfail'); });
+    }
+    if(MODEL && storedModel()!=='auto') return doCall(MODEL);
+    return resolveModel().then(doCall);
   }
   function errText(e) {
     var m = (e && e.message) || '';
@@ -403,10 +447,11 @@ var ApexAI = (function () {
   }
 
   function complete(messages, maxTokens) {
+    function doC(model){
     return fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
-      body: JSON.stringify({ model: MODEL, messages: messages, temperature: 0.6, max_tokens: maxTokens || 900 })
+      body: JSON.stringify({ model: model, messages: messages, temperature: 0.6, max_tokens: maxTokens || 900 })
     }).then(function (r) {
       if (r.status === 401) throw new Error('badkey');
       if (r.status === 429) throw new Error('ratelimit');
@@ -414,11 +459,17 @@ var ApexAI = (function () {
       return r.json();
     }, function () { throw new Error('netfail'); })
     .then(function (d) { return d.choices[0].message.content || ''; });
+    }
+    return resolveModel().then(doC);
   }
 
   return {
     onTool: null,
     complete: complete,
+    listModels: listModels,
+    currentModel: function(){ return MODEL||storedModel(); },
+    setModel: function(id){ try{ localStorage.setItem(MODEL_KEY, id); }catch(e){} MODEL=(id==='auto'?null:id); },
+    resolveModel: resolveModel,
     key: function () { try { return (localStorage.getItem(KEY_NAME) || '').trim(); } catch (e) { return ''; } },
     hasKey: function () { return this.key().length > 10; },
     saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
