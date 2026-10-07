@@ -8,24 +8,31 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0a0e14;color:#e8edf3;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5}
 .hero{text-align:center;padding:38px 16px 18px;background:radial-gradient(ellipse at 50% 0%,#16202e 0%,#0a0e14 70%)}
-.hero h1{margin:0;font-size:2em;letter-spacing:.5px}
-.hero h1 .ast{color:#ffb300}
-.hero p{color:#9fb2c8;margin:8px 0 0}
+.hero h1{margin:0;font-size:2em}.hero h1 .ast{color:#ffb300}.hero p{color:#9fb2c8;margin:8px 0 0}
 .status{display:inline-block;margin-top:12px;padding:6px 14px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#7ee2a8}
 .wrap{max-width:760px;margin:0 auto;padding:16px}
 .card{background:#111927;border:1px solid #223047;border-radius:14px;padding:18px;margin:16px 0}
 .card h2{margin:0 0 10px;font-size:1.15em}
+.card.apex{border-color:#6a4dff;background:#141226}
 .chatrow{display:flex;gap:8px;margin-top:10px}
-#askq{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
+.tin{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
 .btn{padding:12px 20px;border-radius:10px;border:0;background:#ffb300;color:#111;font-weight:700;font-size:1em;cursor:pointer}
-#askout{min-height:90px;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:14px;margin-top:10px;white-space:normal}
-#askout a{color:#ffb300;font-weight:bold}
+.btn.ghost{background:transparent;border:1px solid #2a3a4d;color:#9fb2c8}
+.btn.apexbtn{background:#6a4dff;color:#fff}
+.out{min-height:90px;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:14px;margin-top:10px}
+.out a{color:#ffb300;font-weight:bold}
+.log{max-height:320px;overflow-y:auto;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 12px;border-radius:10px;max-width:92%}
+.msg.u{align-self:flex-end;background:#1a2a4a}
+.msg.a{align-self:flex-start;background:#16202e;border:1px solid #223047}
+.msg .who{font-size:.75em;color:#9fb2c8;margin-bottom:4px}
 .rolechip{display:inline-block;margin:4px 6px 0 0;padding:6px 12px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#9fb2c8;cursor:pointer}
 .rolechip.locked{border-color:#ffb300;color:#ffb300}
 #rolebanner{display:none;margin-top:10px;padding:8px 12px;background:#1a1405;border:1px solid #ffb300;border-radius:8px;color:#ffb300;font-size:.9em}
 ul.tight{margin:8px 0;padding-left:20px}ul.tight li{margin:6px 0}
 .badge{display:inline-block;background:#12351f;color:#7ee2a8;border-radius:6px;padding:2px 8px;font-size:.78em;font-weight:700;margin-right:6px}
-.badge.cloud{background:#1a2a4a;color:#8fb8ff}
+.badge.cloud{background:#2a1a5e;color:#c4b5fd}
+.note{color:#9fb2c8;font-size:.88em}
 .jahnet{margin:34px 0 0;padding:20px 14px;border-top:1px solid #223047;text-align:center}
 .jahnet-title{font-weight:800;letter-spacing:2px;color:#9fb2c8;margin-bottom:10px}
 .jahnet-list{font-size:.85em;line-height:2}.jahnet-list a{color:#8fb8ff;text-decoration:none;margin:0 4px}
@@ -40,15 +47,19 @@ footer{text-align:center;color:#5a6b80;font-size:.8em;padding:14px}
 </div>
 <div class="wrap">
 <div class="card">
+<h2>Version record</h2>
+<p class="note" style="white-space:pre-wrap">Llama Standard 1.0 (frozen 2026-10-07): on-device conversational engine — the ecosystem standard.&#10;Apex AI 2.0 (2026-10-07): online brain — Groq cloud Llama + tools, key stays on your phone.&#10;Full record: <a href="VERSIONS.md" style="color:#ffb300;">VERSIONS.md</a></p>
+</div>
+<div class="card">
 <h2>Engine sources &mdash; your property</h2>
 <ul class="tight">
-<li><b>guide-conv.js</b> (6,729 bytes) — The Signature Llama Guide conversational layer (site 6).<br><a href="engines/guide-conv.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>jah-talk-fallback.js</b> (61,260 bytes) — JAHtalk: the phone-book AI talk engine (site 7).<br><a href="engines/jah-talk-fallback.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>llama-api.js</b> (20,138 bytes) — The Signature Llama API + knowledge layer (site 6).<br><a href="engines/llama-api.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>supreme-engine-2.0.js</b> (9,759 bytes) — The flagship chat engine: conversation, live dictionary lookup, math, roles, honest fallback.<br><a href="engines/supreme-engine-2.0.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li>
+<li><b>apex-engine-2.0.js</b> (7,222 bytes) — The online brain: Groq cloud Llama + tool calling (dictionary, calculator, Wikipedia, network routing). Key stays on-device.<br><a href="engines/apex-engine-2.0.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>guide-conv.js</b> (6,729 bytes) — The Signature Llama Guide conversational layer (site 6).<br><a href="engines/guide-conv.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>jah-talk-fallback.js</b> (61,260 bytes) — JAHtalk: the phone-book AI talk engine (site 7).<br><a href="engines/jah-talk-fallback.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>llama-api.js</b> (20,138 bytes) — The Signature Llama API + knowledge layer (site 6).<br><a href="engines/llama-api.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>llama-standard-1.0.js</b> (9,702 bytes) — FROZEN 2026-10-07 — the ecosystem standard: on-device conversation, live dictionary, math, roles, honest answers.<br><a href="engines/llama-standard-1.0.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li><li><b>supreme-engine-2.0.js</b> (9,759 bytes) — Working copy of the flagship chat engine (same code as Llama Standard 1.0).<br><a href="engines/supreme-engine-2.0.js" download style="color:#ffb300;font-weight:bold;">Download source</a></li>
 </ul>
-<p style="color:#9fb2c8;font-size:.9em">Each file carries the &#10033; Signature stamp: property of Justin Addam Higgins (JAH). Everything built for you is yours &mdash; that has always been the deal.</p>
+<p style="color:#9fb2c8;font-size:.9em">Each file carries the &#10033; Signature stamp: property of Justin Addam Higgins (JAH). Everything built for you is yours.</p>
 </div>
 <div class="card">
 <h2>Plain truth, on the record</h2>
-<p>There are no &ldquo;Muse files&rdquo; to copy here &mdash; Muse runs on Meta&rsquo;s servers, not as files on any machine, so there is nothing to withhold and nothing to hand over. What exists as files is everything above: every engine built for your network, all yours, all downloadable.</p>
+<p>There are no &ldquo;Muse files&rdquo; to copy &mdash; Muse runs on Meta&rsquo;s servers, not as files on any machine, so there is nothing to withhold. What exists as files is everything above. The full-reasoning tier is the Apex cloud path: your free Groq key, typed on your phone, never touching anyone else&rsquo;s hands.</p>
 </div>
 </div>
 <footer>&#10033; Signature &mdash; unlisted system vault</footer>

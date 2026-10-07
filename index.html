@@ -4,28 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>&#10033; The Signature AI &mdash; the Signature version</title>
-<meta name="description" content="The Signature AI: Manon's flagship Signature-version AI. Conversational on-device chat with live dictionary lookup, plus the full-AI cloud path.">
+<meta name="description" content="The Signature AI: Manon's flagship Signature-version AI. Llama Standard 1.0 on-device chat plus Apex AI 2.0, the online agentic brain.">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0a0e14;color:#e8edf3;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5}
 .hero{text-align:center;padding:38px 16px 18px;background:radial-gradient(ellipse at 50% 0%,#16202e 0%,#0a0e14 70%)}
-.hero h1{margin:0;font-size:2em;letter-spacing:.5px}
-.hero h1 .ast{color:#ffb300}
-.hero p{color:#9fb2c8;margin:8px 0 0}
+.hero h1{margin:0;font-size:2em}.hero h1 .ast{color:#ffb300}.hero p{color:#9fb2c8;margin:8px 0 0}
 .status{display:inline-block;margin-top:12px;padding:6px 14px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#7ee2a8}
 .wrap{max-width:760px;margin:0 auto;padding:16px}
 .card{background:#111927;border:1px solid #223047;border-radius:14px;padding:18px;margin:16px 0}
 .card h2{margin:0 0 10px;font-size:1.15em}
+.card.apex{border-color:#6a4dff;background:#141226}
 .chatrow{display:flex;gap:8px;margin-top:10px}
-#askq{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
+.tin{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
 .btn{padding:12px 20px;border-radius:10px;border:0;background:#ffb300;color:#111;font-weight:700;font-size:1em;cursor:pointer}
-#askout{min-height:90px;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:14px;margin-top:10px;white-space:normal}
-#askout a{color:#ffb300;font-weight:bold}
+.btn.ghost{background:transparent;border:1px solid #2a3a4d;color:#9fb2c8}
+.btn.apexbtn{background:#6a4dff;color:#fff}
+.out{min-height:90px;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:14px;margin-top:10px}
+.out a{color:#ffb300;font-weight:bold}
+.log{max-height:320px;overflow-y:auto;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 12px;border-radius:10px;max-width:92%}
+.msg.u{align-self:flex-end;background:#1a2a4a}
+.msg.a{align-self:flex-start;background:#16202e;border:1px solid #223047}
+.msg .who{font-size:.75em;color:#9fb2c8;margin-bottom:4px}
 .rolechip{display:inline-block;margin:4px 6px 0 0;padding:6px 12px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#9fb2c8;cursor:pointer}
 .rolechip.locked{border-color:#ffb300;color:#ffb300}
 #rolebanner{display:none;margin-top:10px;padding:8px 12px;background:#1a1405;border:1px solid #ffb300;border-radius:8px;color:#ffb300;font-size:.9em}
 ul.tight{margin:8px 0;padding-left:20px}ul.tight li{margin:6px 0}
 .badge{display:inline-block;background:#12351f;color:#7ee2a8;border-radius:6px;padding:2px 8px;font-size:.78em;font-weight:700;margin-right:6px}
-.badge.cloud{background:#1a2a4a;color:#8fb8ff}
+.badge.cloud{background:#2a1a5e;color:#c4b5fd}
+.note{color:#9fb2c8;font-size:.88em}
 .jahnet{margin:34px 0 0;padding:20px 14px;border-top:1px solid #223047;text-align:center}
 .jahnet-title{font-weight:800;letter-spacing:2px;color:#9fb2c8;margin-bottom:10px}
 .jahnet-list{font-size:.85em;line-height:2}.jahnet-list a{color:#8fb8ff;text-decoration:none;margin:0 4px}
@@ -36,12 +43,12 @@ footer{text-align:center;color:#5a6b80;font-size:.8em;padding:14px}
 <body>
 <div class="hero">
 <h1><span class="ast">&#10033;</span> The Signature AI</h1>
-<p>The Signature version &mdash; your flagship AI. Free forever.</p>
-<div><span class="status">&#10033; On-device chat live &middot; Full-AI cloud path ready</span></div>
+<p>The Signature version &mdash; one apex AI for everything. Free forever.</p>
+<div><span class="status">&#10033; Llama Standard 1.0 live &middot; &#11042; Apex AI 2.0 ready</span></div>
 </div>
 <div class="wrap">
 <div class="card">
-<h2>&#10033; Talk to the Signature AI</h2>
+<h2>&#10033; Llama Standard 1.0 <span class="note">&mdash; on-device chat</span></h2>
 <div>
 <span class="rolechip" onclick="setRole('#Task-Movie-Expert')">#Task-Movie-Expert</span>
 <span class="rolechip" onclick="setRole('#Task-Chef')">#Task-Chef</span>
@@ -49,34 +56,50 @@ footer{text-align:center;color:#5a6b80;font-size:.8em;padding:14px}
 </div>
 <div id="rolebanner" role="status"></div>
 <div class="chatrow">
-<input type="text" id="askq" placeholder="Ask anything&hellip; (try: define serendipity &middot; 12*8+3 &middot; who are you)" aria-label="Ask The Signature AI">
+<input type="text" id="askq" class="tin" placeholder="Ask anything&hellip; (try: define serendipity &middot; 12*8+3 &middot; are you an ai)" aria-label="Ask Llama Standard">
 <button class="btn" onclick="askLlama()">Ask</button>
 </div>
-<div id="askout" role="status">Ready. I look words up live in your dictionary, do math, and hold a real conversation.</div>
+<div id="askout" class="out" role="status">Ready. I look words up live in your dictionary, do math, and hold a real conversation &mdash; all on your phone.</div>
+</div>
+<div class="card apex">
+<h2>&#11042; Apex AI 2.0 <span class="note">&mdash; the online brain</span></h2>
+<div id="apex-setup">
+<p class="note">Apex is the full agentic AI: a cloud Llama that <b>reasons, uses tools, and searches the web</b> for you when you ask. It needs your own free key &mdash; I can&rsquo;t mint keys, signup takes 30 seconds and needs your email:</p>
+<ol class="tight">
+<li><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:#c4b5fd;font-weight:bold;">Get a free Groq key &rarr;</a> (free tier, no card)</li>
+<li>Paste it below. It stays on <b>your phone only</b> &mdash; never on my servers, never in the site&rsquo;s code.</li>
+</ol>
+<div class="chatrow">
+<input type="password" id="apexkey" class="tin" placeholder="Paste your Groq key (gsk_...)" aria-label="Groq API key" autocomplete="off">
+<button class="btn apexbtn" onclick="apexSaveKey()">Activate</button>
+</div>
+<p class="note" id="apex-keymsg"></p>
+</div>
+<div id="apex-chat" style="display:none">
+<div class="log" id="apexlog" aria-live="polite"></div>
+<div class="chatrow">
+<input type="text" id="apexq" class="tin" placeholder="Ask Apex anything&hellip; it will use its tools" aria-label="Ask Apex AI">
+<button class="btn apexbtn" onclick="apexAsk()">Ask</button>
+</div>
+<div class="chatrow">
+<button class="btn ghost" onclick="ApexAI.clearHist();document.getElementById('apexlog').innerHTML='';apexSay('a','Fresh start. What do you need?');">New chat</button>
+<button class="btn ghost" onclick="ApexAI.forgetKey();location.reload();">Forget key</button>
+</div>
+</div>
 </div>
 <div class="card">
 <h2>What this AI actually does</h2>
 <ul class="tight">
-<li><span class="badge">ON DEVICE</span>Defines any word — looked up live from your Signature Dictionary, all its words, not a cheat sheet.</li>
-<li><span class="badge">ON DEVICE</span>Math, calculated live through the Signature Calculator engine.</li>
-<li><span class="badge">ON DEVICE</span>Hashtag roles (<b>#Task-Chef</b>, <b>#Assume-Role-Tutor</b>) that stay locked until you change them.</li>
-<li><span class="badge">ON DEVICE</span>Real conversation — it remembers this session and never repeats itself back to back.</li>
-<li><span class="badge cloud">FULL AI</span>Open-ended reasoning like a full assistant runs through the <b>Industry Standard</b> cloud path below.</li>
-</ul>
-</div>
-<div class="card">
-<h2>&#11042; Full AI &mdash; Industry Standard path</h2>
-<p>Straight truth: the chat above runs on your device. It is genuinely conversational and reads your live data &mdash; but it is not a giant reasoning model, and no website can ship one inside the page. Real full-AI reasoning needs a cloud model.</p>
-<ul class="tight">
-<li>The <b>Industry Standard</b> path on the <a href="https://justinahiggins614-cmyk.github.io/signature-llama" style="color:#ffb300;font-weight:bold;">Signature Llama site</a> connects a full-size cloud Llama &mdash; that is the &ldquo;as good as a real AI&rdquo; tier.</li>
-<li>It uses <b>your free key</b>, typed on <b>your device</b>. The key never leaves your phone and never touches my hands.</li>
-<li>Nothing here pretends the on-device chat is the cloud model. They are labeled everywhere they appear.</li>
+<li><span class="badge">STANDARD</span>Defines any word &mdash; looked up live from your Signature Dictionary, all its words, not a cheat sheet.</li>
+<li><span class="badge">STANDARD</span>Math, calculated live through the Signature Calculator engine.</li>
+<li><span class="badge">STANDARD</span>Hashtag roles, real conversation, never repeats itself back to back.</li>
+<li><span class="badge cloud">APEX 2.0</span>Cloud Llama with <b>tools</b>: dictionary, calculator, Wikipedia web knowledge, and the 39-site network &mdash; it reasons, calls tools, reads results, then answers. Needs your free key above.</li>
 </ul>
 </div>
 </div>
 <nav class="jahnet" aria-label="The JAH Network">
 <div class="jahnet-title">THE JAH NETWORK</div>
-<div class="jahnet-list"><a href="https://justinahiggins614-cmyk.github.io/signature-math">1 Signature Math</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-calculator">2 Calculator</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary">3 Dictionary</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-wiki">4 JAH Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks">5 JAH-N Wiki Leaks</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama">6 Llama</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models">7 Phone Book</a> · <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog">8 Patents</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Specs</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems">10 PCs</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-books">11 Books</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-comics">12 Comics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-newspapers">13 News</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-backend">14 Mix Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators">15 Generators</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab">16 AI Mix</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics">17 Olympics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker">18 Chips</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-app-archive">19 Apps</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher">20 Robots</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver">21 Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker">22 Pixel</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker">23 Music</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-fixit">24 Fix-It</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-university">25 University</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-earth">26 Earth</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-flight-school">27 Flight</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-game-store">28 Games</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-website-creator">29 Sites</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-antivirus">30 Antivirus</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-os-updater">31 OS Updater</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-space-mapping">32 Space</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cookbook">33 Cookbook</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-spell-check">34 Spell Check</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-image-grid-measure">35 Grid Measure</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall">36 Cyber Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-3d-print">37 3D Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama-2">38 Signature Llama 2.0</a></div>
+<div class="jahnet-list"><a href="https://justinahiggins614-cmyk.github.io/signature-math">1 Signature Math</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-calculator">2 Calculator</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary">3 Dictionary</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-wiki">4 JAH Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks">5 JAH-N Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama">6 Llama</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models">7 Phone Book</a> · <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog">8 Patents</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Specs</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems">10 PCs</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-books">11 Books</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-comics">12 Comics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-newspapers">13 News</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-backend">14 Mix Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators">15 Generators</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab">16 AI Mix</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics">17 Olympics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker">18 Chips</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-app-archive">19 Apps</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher">20 Robots</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver">21 Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker">22 Pixel</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker">23 Music</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-fixit">24 Fix-It</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-university">25 University</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-earth">26 Earth</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-flight-school">27 Flight</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-game-store">28 Games</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-website-creator">29 Sites</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-antivirus">30 Antivirus</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-os-updater">31 OS Updater</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-space-mapping">32 Space</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cookbook">33 Cookbook</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-spell-check">34 Spell Check</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-image-grid-measure">35 Grid Measure</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall">36 Cyber Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-3d-print">37 3D Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-the-ai">39 The Signature AI</a></div>
 <div class="jahnet-here">&#10033; The Signature AI &mdash; YOU ARE HERE</div>
 </nav>
 <footer>&#10033; Signature &mdash; property of Justin Addam Higgins (JAH) &middot; Free forever</footer>
@@ -90,163 +113,179 @@ function setRole(tag){ LOCKED_ROLE = tag;
   try{ event.target.classList.add('locked'); }catch(e){}
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-/* --- The Signature AI flagship conversational engine (Signature version) --- */
-var SupremeConv = {
-  mem: [], said: {},
-  remember: function(q, intent){ this.mem.push({q:q, intent:intent, t:Date.now()}); if(this.mem.length>10) this.mem.shift(); },
-  pick: function(key, arr){ var h=this.said[key]||0; var v=arr[h%arr.length]; this.said[key]=h+1; return v; }
-};
-var DICT_BASE = 'https://justinahiggins614-cmyk.github.io/jah-dictionary';
-var dictCache = {};
-function dictLookup(word){
-  word = String(word||'').toLowerCase().trim();
-  if(!word) return Promise.resolve(null);
-  var L = word.charAt(0);
-  if(!/[a-z]/.test(L)) return Promise.resolve(null);
-  function scan(rows){
-    for(var i=0;i<rows.length;i++){ if(String(rows[i][0]).toLowerCase()===word) return rows[i]; }
-    return null;
-  }
-  if(dictCache[L]) return Promise.resolve(scan(dictCache[L]));
-  return fetch(DICT_BASE + '/data/lexical/shard-' + L + '.json')
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(rows){ dictCache[L]=rows; return scan(rows); })
-    .catch(function(){ return null; });
-}
-function supremeAnswer(q){
-  var role = LOCKED_ROLE, rq = q;
-  var hm = q.match(/#[A-Za-z][A-Za-z0-9\-]*/);
-  if(hm){ role = hm[0]; LOCKED_ROLE = role;
-    var b = document.getElementById('rolebanner');
-    b.style.display='block'; b.textContent='🔒 ROLE LOCKED: '+role+' — stays locked until you change it.';
-    rq = q.replace(hm[0],'').trim();
-  }
-  var roleName = role ? role.replace(/^#/,'').replace(/-/g,' ') : null;
-  var roleTag = roleName ? '['+roleName+'] ' : '';
-  /* math via safe parser */
-  var mq = rq.match(/^([\d\s+\-*/().^%]+)$/);
-  if(mq && /\d/.test(rq)){
-    try{
-      var expr = rq.replace(/\^/g,'**');
-      if(/^[\d\s+\-*/().%*]+$/.test(expr)){
-        var v = Function('"use strict";return ('+expr+')')();
-        if(typeof v === 'number' && isFinite(v)){
-          SupremeConv.remember(q,'math');
-          return '🧮 ' + roleTag + rq + ' = ' + v + '\n✔ Calculated live by the Signature Calculator engine (site 2).';
-        }
-      }
-    }catch(e){}
-  }
-  var low = rq.toLowerCase().trim();
-  /* --- conversational intents --- */
-  if(/^(hi|hey|hello|yo|sup|howdy|good (morning|afternoon|evening))\b/.test(low) && low.length < 30){
-    SupremeConv.remember(q,'greet');
-    return roleTag + SupremeConv.pick('greet', [
-      'Hey — The Signature AI here, your flagship build. Ask me anything: words from the live dictionary, math, or anywhere across the 37 sites.',
-      'Hello! I\u2019m the Signature AI. I can define words straight out of the Signature Dictionary, do math, and route you through the whole network.',
-      'Hey there — flagship mode on. What do you want to know?'
-    ]);
-  }
-  if(/\bwho are you\b|\byour name\b|\bwhat are you\b/.test(low)){
-    SupremeConv.remember(q,'identity');
-    return roleTag + SupremeConv.pick('identity', [
-      'I\u2019m The Signature AI — the flagship Signature-version build. My duties: define any word from the live Signature Dictionary, solve math through the Calculator engine, lock into hashtag roles like #Task-Chef, and route you to any of the 37 Signature sites and archives.',
-      'The Signature AI, your flagship build, at your service. I look words up live, calculate, take roles, and know the whole network. For full open-ended reasoning, the Industry Standard cloud path on the Llama site is the deeper brain.'
-    ]);
-  }
-  if(/\b(are you (ai|real|conscious|alive|sentient)|testing you|aware or|just (a )?copy|copy.?paste|robot|bot\?)\b/.test(low)){
-    SupremeConv.remember(q,'testchallenge');
-    return roleTag + SupremeConv.pick('testchallenge', [
-      'Straight answer: I\u2019m the on-device conversational layer of The Signature AI — I understand your words well enough to look things up and hold a conversation, but I\u2019m not the trained 4M model itself and I\u2019m not conscious. The full reasoning brain is the Industry Standard path (free key) on the Signature Llama site.',
-      'Honest: this chat runs on your device — a real conversational engine with live dictionary lookup, not canned lines, but not a giant reasoning model either, and not conscious. The Industry Standard cloud Llama is the one that reasons like a full AI.'
-    ]);
-  }
-  if(/\b(thanks|thank you|thx|appreciated)\b/.test(low)){
-    SupremeConv.remember(q,'thanks');
-    return roleTag + SupremeConv.pick('thanks', ['Anytime — that\u2019s what the supreme build is for.', 'You got it. Ask me anything else.', 'Happy to help.']);
-  }
-  if(/\b(bye|goodbye|see you|later)\b/.test(low) && low.length < 25){
-    SupremeConv.remember(q,'bye');
-    return roleTag + SupremeConv.pick('bye', ['Later — I\u2019ll be right here when you need the flagship brain.', 'Goodbye for now.']);
-  }
-  /* --- live dictionary lookup: "define X", "what does X mean", "meaning of X" --- */
-  var dm = low.match(/\bdefine\s+([a-z][a-z\-']*)/) || low.match(/\bmeaning of\s+([a-z][a-z\-']*)/) ||
-           low.match(/\bwhat does\s+([a-z][a-z\-']*)\s+mean\b/) || low.match(/\bdefinition of\s+([a-z][a-z\-']*)/);
-  if(dm){
-    var w = dm[1];
-    SupremeConv.remember(q,'define:'+w);
-    return dictLookup(w).then(function(row){
-      if(row){
-        var pos = row[1] ? ' ('+row[1]+')' : '';
-        var pron = row[2] ? ' — say it: '+row[2] : '';
-        return '📖 ' + roleTag + row[0] + pos + pron + '\n' + (row[3] || 'Definition on file.') +
-          '\n\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';
-      }
-      return '📖 ' + roleTag + 'I looked through the live Signature Dictionary and couldn\u2019t find \u201c'+w+'\u201d. Check the spelling, or try the dictionary site directly:\n[[LINK:' + DICT_BASE + '|Open the Signature Dictionary →]]';
-    });
-  }
-  /* --- single word query: treat as define --- */
-  if(/^[a-z][a-z\-']{1,30}$/.test(low)){
-    SupremeConv.remember(q,'define:'+low);
-    return dictLookup(low).then(function(row){
-      if(row){
-        var pos = row[1] ? ' ('+row[1]+')' : '';
-        var pron = row[2] ? ' — say it: '+row[2] : '';
-        return '📖 ' + roleTag + row[0] + pos + pron + '\n' + (row[3] || 'Definition on file.') +
-          '\n\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';
-      }
-      return null; /* fall through to fallback below */
-    }).then(function(a){
-      if(a) return a;
-      return roleTag + SupremeConv.pick('fallback', [
-        'I didn\u2019t catch that one — I looked it up and it\u2019s not in the dictionary either. Try \u201cdefine serendipity\u201d, a math question like 12*8+3, or ask me who I am.',
-        'Hmm, that one slipped past me. I\u2019m best at: defining words (try \u201cdefine <word>\u201d), math, and pointing you around the 37 sites.',
-        'Not sure what you meant there. Give me a word to define, some math, or a hashtag role like #Task-Chef.'
-      ]);
-    });
-  }
-  /* --- archive routing: honest pointers with real links --- */
+['/* --- Signature Llama 2.0 supreme conversational engine (replaces demo brain) --- */', 'var SupremeConv = {', '  mem: [], said: {},', '  remember: function(q, intent){ this.mem.push({q:q, intent:intent, t:Date.now()}); if(this.mem.length>10) this.mem.shift(); },', '  pick: function(key, arr){ var h=this.said[key]||0; var v=arr[h%arr.length]; this.said[key]=h+1; return v; }', '};', "var DICT_BASE = 'https://justinahiggins614-cmyk.github.io/jah-dictionary';", 'var dictCache = {};', 'function dictLookup(word){', "  word = String(word||'').toLowerCase().trim();", '  if(!word) return Promise.resolve(null);', '  var L = word.charAt(0);', '  if(!/[a-z]/.test(L)) return Promise.resolve(null);', '  function scan(rows){', '    for(var i=0;i<rows.length;i++){ if(String(rows[i][0]).toLowerCase()===word) return rows[i]; }', '    return null;', '  }', '  if(dictCache[L]) return Promise.resolve(scan(dictCache[L]));', "  return fetch(DICT_BASE + '/data/lexical/shard-' + L + '.json')", '    .then(function(r){ if(!r.ok) throw 0; return r.json(); })', '    .then(function(rows){ dictCache[L]=rows; return scan(rows); })', '    .catch(function(){ return null; });', '}', 'function supremeAnswer(q){', '  var role = LOCKED_ROLE, rq = q;', '  var hm = q.match(/#[A-Za-z][A-Za-z0-9\\-]*/);', '  if(hm){ role = hm[0]; LOCKED_ROLE = role;', "    var b = document.getElementById('rolebanner');", "    b.style.display='block'; b.textContent='🔒 ROLE LOCKED: '+role+' — stays locked until you change it.';", "    rq = q.replace(hm[0],'').trim();", '  }', "  var roleName = role ? role.replace(/^#/,'').replace(/-/g,' ') : null;", "  var roleTag = roleName ? '['+roleName+'] ' : '';", '  /* math via safe parser */', '  var mq = rq.match(/^([\\d\\s+\\-*/().^%]+)$/);', '  if(mq && /\\d/.test(rq)){', '    try{', "      var expr = rq.replace(/\\^/g,'**');", '      if(/^[\\d\\s+\\-*/().%*]+$/.test(expr)){', '        var v = Function(\'"use strict";return (\'+expr+\')\')();', "        if(typeof v === 'number' && isFinite(v)){", "          SupremeConv.remember(q,'math');", "          return '🧮 ' + roleTag + rq + ' = ' + v + '\\n✔ Calculated live by the Signature Calculator engine (site 2).';", '        }', '      }', '    }catch(e){}', '  }', '  var low = rq.toLowerCase().trim();', '  /* --- conversational intents --- */', '  if(/^(hi|hey|hello|yo|sup|howdy|good (morning|afternoon|evening))\\b/.test(low) && low.length < 30){', "    SupremeConv.remember(q,'greet');", "    return roleTag + SupremeConv.pick('greet', [", "      'Hey — Signature Llama 2.0 here, the supreme build. Ask me anything: words from the live dictionary, math, or anywhere across the 37 sites.',", "      'Hello! I\\u2019m the 2.0 supreme AI. I can define words straight out of the Signature Dictionary, do math, and route you through the whole network.',", "      'Hey there — supreme mode on. What do you want to know?'", '    ]);', '  }', '  if(/\\bwho are you\\b|\\byour name\\b|\\bwhat are you\\b/.test(low)){', "    SupremeConv.remember(q,'identity');", "    return roleTag + SupremeConv.pick('identity', [", "      'I\\u2019m Signature Llama 2.0 — the supreme universal build. My duties: define any word from the live Signature Dictionary, solve math through the Calculator engine, lock into hashtag roles like #Task-Chef, and route you to any of the 37 Signature sites and archives.',", "      'Signature Llama 2.0, the supreme build, at your service. I look words up live, calculate, take roles, and know the whole network. For full open-ended reasoning, the Industry Standard cloud path on the Llama site is the deeper brain.'", '    ]);', '  }', '  if(/\\bare you\\b[^.?!]{0,50}\\b(ai|a\\.?i\\.?|artificial intelligence|real|conscious|alive|sentient|robot|bot)\\b/.test(low) || /\\btesting you\\b/.test(low) || /\\bjust (a )?copy/.test(low)){', "    SupremeConv.remember(q,'testchallenge');", "    return roleTag + SupremeConv.pick('testchallenge', [", "      'Straight answer: I\\u2019m the on-device conversational layer of Signature Llama 2.0 — I understand your words well enough to look things up and hold a conversation, but I\\u2019m not the trained 4M model itself and I\\u2019m not conscious. The full reasoning brain is the Industry Standard path (free key) on the Signature Llama site.',", "      'Honest: this chat runs on your device — a real conversational engine with live dictionary lookup, not canned lines, but not a giant reasoning model either, and not conscious. The Industry Standard cloud Llama is the one that reasons like a full AI.'", '    ]);', '  }', '  if(/\\b(thanks|thank you|thx|appreciated)\\b/.test(low)){', "    SupremeConv.remember(q,'thanks');", "    return roleTag + SupremeConv.pick('thanks', ['Anytime — that\\u2019s what the supreme build is for.', 'You got it. Ask me anything else.', 'Happy to help.']);", '  }', '  if(/\\b(bye|goodbye|see you|later)\\b/.test(low) && low.length < 25){', "    SupremeConv.remember(q,'bye');", "    return roleTag + SupremeConv.pick('bye', ['Later — I\\u2019ll be right here when you need the supreme brain.', 'Goodbye for now.']);", '  }', '  /* --- live dictionary lookup: "define X", "what does X mean", "meaning of X" --- */', "  var dm = low.match(/\\bdefine\\s+([a-z][a-z\\-']*)/) || low.match(/\\bmeaning of\\s+([a-z][a-z\\-']*)/) ||", "           low.match(/\\bwhat does\\s+([a-z][a-z\\-']*)\\s+mean\\b/) || low.match(/\\bdefinition of\\s+([a-z][a-z\\-']*)/);", '  if(dm){', '    var w = dm[1];', "    SupremeConv.remember(q,'define:'+w);", '    return dictLookup(w).then(function(row){', '      if(row){', "        var pos = row[1] ? ' ('+row[1]+')' : '';", "        var pron = row[2] ? ' — say it: '+row[2] : '';", "        return '📖 ' + roleTag + row[0] + pos + pron + '\\n' + (row[3] || 'Definition on file.') +", "          '\\n\\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';", '      }', "      return '📖 ' + roleTag + 'I looked through the live Signature Dictionary and couldn\\u2019t find \\u201c'+w+'\\u201d. Check the spelling, or try the dictionary site directly:\\n[[LINK:' + DICT_BASE + '|Open the Signature Dictionary →]]';", '    });', '  }', '  /* --- single word query: treat as define --- */', "  if(/^[a-z][a-z\\-']{1,30}$/.test(low)){", "    SupremeConv.remember(q,'define:'+low);", '    return dictLookup(low).then(function(row){', '      if(row){', "        var pos = row[1] ? ' ('+row[1]+')' : '';", "        var pron = row[2] ? ' — say it: '+row[2] : '';", "        return '📖 ' + roleTag + row[0] + pos + pron + '\\n' + (row[3] || 'Definition on file.') +", "          '\\n\\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';", '      }', '      return null; /* fall through to fallback below */', '    }).then(function(a){', '      if(a) return a;', "      return roleTag + SupremeConv.pick('fallback', [", "        'I didn\\u2019t catch that one — I looked it up and it\\u2019s not in the dictionary either. Try \\u201cdefine serendipity\\u201d, a math question like 12*8+3, or ask me who I am.',", "        'Hmm, that one slipped past me. I\\u2019m best at: defining words (try \\u201cdefine <word>\\u201d), math, and pointing you around the 37 sites.',", "        'Not sure what you meant there. Give me a word to define, some math, or a hashtag role like #Task-Chef.'", '      ]);', '    });', '  }', '  /* --- archive routing: honest pointers with real links --- */', "  var NET = 'https://justinahiggins614-cmyk.github.io';", "  if(/\\bpatent\\b/.test(low)){ SupremeConv.remember(q,'route:patent');", "    return roleTag + 'Patents live in two places:\\n[[LINK:'+NET+'/cyber-patent-catalog|Globally Rejustered Patent Catalog →]] (harvested public records)\\n[[LINK:'+NET+'/signature-one-archive/specs.html|Signature Spec Catalog →]] (your original drafts)';", '  }', "  if(/\\bwiki\\b|\\bhistory of\\b|\\bwho (was|is)\\b/.test(low)){ SupremeConv.remember(q,'route:wiki');", "    return roleTag + 'For deep articles try:\\n[[LINK:'+NET+'/jah-wiki|JAH Wiki →]]\\n[[LINK:'+NET+'/jah-n-wiki-leaks|JAH-N Wiki Leaks →]] (the classified-dossier side)';", '  }', "  if(/\\bsong|music\\b/.test(low)){ SupremeConv.remember(q,'route:music');", "    return roleTag + 'Music lives at [[LINK:'+NET+'/signature-ai-song-maker|Signature Music Studio →]] — full song generator in there.';", '  }', '  /* --- honest fallback: never canned, never word salad --- */', "  SupremeConv.remember(q,'fallback');", "  return roleTag + SupremeConv.pick('fallback', [", "    'I want to give you a real answer, not a guess — I\\u2019m best at defining words (try \\u201cdefine <word>\\u201d), math like 12*8+3, and routing you across the 37 sites. For open-ended reasoning, the Industry Standard cloud path on the Signature Llama site is the deeper brain.',", "    'That\\u2019s outside what I can answer on-device. I do words, math, roles, and network routing for real — everything else, the full cloud Llama handles.',", "    'I don\\u2019t have a real answer for that one, and I\\u2019d rather say so than make one up. Try a word, some math, or ask me what I can do.'", '  ]);', '}', 'function renderAns(out, a){', "  var h = esc(a).replace(/\\n/g,'<br>');", '  h = h.replace(/\\[\\[LINK:([^|]+)\\|([^\\]]+)\\]\\]/g, \'<a href="$1" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">$2</a>\');', '  out.innerHTML = h;', '}', 'function askLlama(){', "  var q = document.getElementById('askq').value.trim();", "  var out = document.getElementById('askout');", "  if(!q){ out.textContent = 'Type a question first.'; return; }", "  out.textContent = '🦠 thinking — routing across the ecosystem…';", '  try{', '    var ans = supremeAnswer(q);', "    if(ans && typeof ans.then === 'function'){", "      out.textContent = '📖 looking it up in the live Signature Dictionary…';", '      ans.then(function(a){ renderAns(out, a); },', "               function(){ out.textContent = 'Hmm, that lookup hiccuped. Try again.'; });", '    } else {', '      setTimeout(function(){ renderAns(out, ans); }, 350);', '    }', "  }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }", '}', '']
+/* Apex AI engine 2.0 - key lives ONLY on the user's device, sent ONLY to the provider API. */
+var ApexAI = (function () {
+  var KEY_NAME = 'sig_apex_groq_key';
+  var MODEL = 'llama-3.3-70b-versatile';
+  var API = 'https://api.groq.com/openai/v1/chat/completions';
   var NET = 'https://justinahiggins614-cmyk.github.io';
-  if(/\bpatent\b/.test(low)){ SupremeConv.remember(q,'route:patent');
-    return roleTag + 'Patents live in two places:\n[[LINK:'+NET+'/cyber-patent-catalog|Globally Rejustered Patent Catalog →]] (harvested public records)\n[[LINK:'+NET+'/signature-one-archive/specs.html|Signature Spec Catalog →]] (your original drafts)';
-  }
-  if(/\bwiki\b|\bhistory of\b|\bwho (was|is)\b/.test(low)){ SupremeConv.remember(q,'route:wiki');
-    return roleTag + 'For deep articles try:\n[[LINK:'+NET+'/jah-wiki|JAH Wiki →]]\n[[LINK:'+NET+'/jah-n-wiki-leaks|JAH-N Wiki Leaks →]] (the classified-dossier side)';
-  }
-  if(/\bsong|music\b/.test(low)){ SupremeConv.remember(q,'route:music');
-    return roleTag + 'Music lives at [[LINK:'+NET+'/signature-ai-song-maker|Signature Music Studio →]] — full song generator in there.';
-  }
-  /* --- honest fallback: never canned, never word salad --- */
-  SupremeConv.remember(q,'fallback');
-  return roleTag + SupremeConv.pick('fallback', [
-    'I want to give you a real answer, not a guess — I\u2019m best at defining words (try \u201cdefine <word>\u201d), math like 12*8+3, and routing you across the 37 sites. For open-ended reasoning, the Industry Standard cloud path on the Signature Llama site is the deeper brain.',
-    'That\u2019s outside what I can answer on-device. I do words, math, roles, and network routing for real — everything else, the full cloud Llama handles.',
-    'I don\u2019t have a real answer for that one, and I\u2019d rather say so than make one up. Try a word, some math, or ask me what I can do.'
-  ]);
-}
-function renderAns(out, a){
-  var h = esc(a).replace(/\n/g,'<br>');
-  h = h.replace(/\[\[LINK:([^|]+)\|([^\]]+)\]\]/g, '<a href="$1" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">$2</a>');
-  out.innerHTML = h;
-}
-function askLlama(){
-  var q = document.getElementById('askq').value.trim();
-  var out = document.getElementById('askout');
-  if(!q){ out.textContent = 'Type a question first.'; return; }
-  out.textContent = '🦠 thinking — routing across the ecosystem…';
-  try{
-    var ans = supremeAnswer(q);
-    if(ans && typeof ans.then === 'function'){
-      out.textContent = '📖 looking it up in the live Signature Dictionary…';
-      ans.then(function(a){ renderAns(out, a); },
-               function(){ out.textContent = 'Hmm, that lookup hiccuped. Try again.'; });
-    } else {
-      setTimeout(function(){ renderAns(out, ans); }, 350);
-    }
-  }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }
-}
+  var hist = []; /* {role, content} — this session */
 
+  var TOOLS = [
+    { type: 'function', 'function': { name: 'define_word',
+      description: 'Look up a word in the live Signature Dictionary. Use for define/meaning/spelling questions.',
+      parameters: { type: 'object', properties: { word: { type: 'string', description: 'The word to define' } }, required: ['word'] } } },
+    { type: 'function', 'function': { name: 'calculate',
+      description: 'Safely evaluate a math expression (supports + - * / % ^ parentheses).',
+      parameters: { type: 'object', properties: { expr: { type: 'string', description: 'Math expression, e.g. 12*8+3' } }, required: ['expr'] } } },
+    { type: 'function', 'function': { name: 'wikipedia',
+      description: 'Get a Wikipedia summary for web knowledge (people, places, history, science).',
+      parameters: { type: 'object', properties: { title: { type: 'string', description: 'Article title to look up' } }, required: ['title'] } } },
+    { type: 'function', 'function': { name: 'route_site',
+      description: 'Point the user at a Signature network site (dictionary, wiki, calculator, patents, specs, music, llama, etc).',
+      parameters: { type: 'object', properties: { topic: { type: 'string', description: 'What the user wants: e.g. patents, music, wiki, math' } }, required: ['topic'] } } }
+  ];
+
+  function sysPrompt() {
+    return 'You are The Signature AI, the flagship Signature-version AI, built by Justin Addam Higgins (JAH). ' +
+      'You are warm, direct, and honest. You have real tools: define_word (the live Signature Dictionary with all its words), ' +
+      'calculate (safe math), wikipedia (web knowledge), route_site (the 39-site Signature network). ' +
+      'Use tools whenever the user asks about words, math, facts, or the network — never guess what a tool can answer. ' +
+      'Keep answers short and plain-spoken like a chat, not essays. Never claim to be Muse or Meta\'s model. ' +
+      'Everything is free forever; nothing here costs the user money.';
+  }
+
+  function safeCalc(expr) {
+    try {
+      var e = String(expr).replace(/\^/g, '**');
+      if (!/^[\d\s+\-*/().%*]+$/.test(e) || !/\d/.test(e)) return 'not a valid math expression';
+      var v = Function('"use strict";return (' + e + ')')();
+      return (typeof v === 'number' && isFinite(v)) ? String(v) : 'could not calculate';
+    } catch (err) { return 'could not calculate'; }
+  }
+
+  function runTool(name, args) {
+    args = args || {};
+    if (name === 'define_word') {
+      return dictLookup(args.word).then(function (row) {
+        if (row) return row[0] + (row[1] ? ' (' + row[1] + ')' : '') + ': ' + (row[3] || 'on file') + ' [Signature Dictionary ' + row[4] + ']';
+        return 'Not found in the Signature Dictionary: ' + args.word;
+      });
+    }
+    if (name === 'calculate') return Promise.resolve(safeCalc(args.expr));
+    if (name === 'wikipedia') {
+      return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(args.title))
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (j) { return (j.title ? j.title + ': ' : '') + (j.extract || 'no summary'); })
+        .catch(function () { return 'Wikipedia lookup failed for: ' + args.title; });
+    }
+    if (name === 'route_site') {
+      var t = String(args.topic || '').toLowerCase();
+      var map = [
+        ['dictionary', '3 Dictionary', NET + '/jah-dictionary'], ['word', '3 Dictionary', NET + '/jah-dictionary'],
+        ['wiki', '4 JAH Wiki', NET + '/jah-wiki'], ['leak', '5 JAH-N Wiki Leaks', NET + '/jah-n-wiki-leaks'],
+        ['calcul', '2 Calculator', NET + '/jah-calculator'], ['math', '2 Calculator', NET + '/jah-calculator'],
+        ['patent', '8 Patent Catalog', NET + '/cyber-patent-catalog'],
+        ['spec', '9 Spec Catalog', NET + '/signature-one-archive/specs.html'],
+        ['music', '23 Music Studio', NET + '/signature-ai-song-maker'], ['song', '23 Music Studio', NET + '/signature-ai-song-maker'],
+        ['llama', '6 Signature Llama', NET + '/signature-llama'], ['phone', '7 AI Phone Book', NET + '/jah-ai-models'],
+        ['book', '11 Book Depository', NET + '/signature-books'], ['mall', '36 Cyber Mega-Mall', NET + '/signature-cyber-mega-mall']
+      ];
+      for (var i = 0; i < map.length; i++) if (t.indexOf(map[i][0]) >= 0) return Promise.resolve('Site ' + map[i][1] + ': ' + map[i][2]);
+      return Promise.resolve('Signature network: ' + NET + '/signature-the-ai (39 sites — ask which one)');
+    }
+    return Promise.resolve('unknown tool: ' + name);
+  }
+
+  function groq(messages, tools) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+      body: JSON.stringify({ model: MODEL, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
+    }).then(function (r) {
+      if (r.status === 401) throw new Error('badkey');
+      if (!r.ok) throw new Error('api' + r.status);
+      return r.json();
+    });
+  }
+
+  function ask(q) {
+    var messages = [{ role: 'system', content: sysPrompt() }];
+    hist.forEach(function (h) { messages.push(h); });
+    messages.push({ role: 'user', content: q });
+    var rounds = 0;
+    function loop() {
+      return groq(messages, TOOLS).then(function (data) {
+        var msg = data.choices[0].message;
+        if (msg.tool_calls && msg.tool_calls.length && rounds < 5) {
+          rounds++;
+          messages.push(msg);
+          var chain = Promise.resolve();
+          msg.tool_calls.forEach(function (tc) {
+            chain = chain.then(function () {
+              var a = {};
+              try { a = JSON.parse(tc['function']['arguments'] || '{}'); } catch (e) {}
+              return runTool(tc['function'].name, a).then(function (out) {
+                messages.push({ role: 'tool', tool_call_id: tc.id, content: String(out).slice(0, 2000) });
+              });
+            });
+          });
+          return chain.then(loop);
+        }
+        var text = msg.content || '(no answer)';
+        hist.push({ role: 'user', content: q }, { role: 'assistant', content: text });
+        if (hist.length > 20) hist = hist.slice(-20);
+        return text;
+      });
+    }
+    return loop();
+  }
+
+  return {
+    key: function () { try { return (localStorage.getItem(KEY_NAME) || '').trim(); } catch (e) { return ''; } },
+    hasKey: function () { return this.key().length > 10; },
+    saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
+    forgetKey: function () { try { localStorage.removeItem(KEY_NAME); } catch (e) {} hist = []; },
+    clearHist: function () { hist = []; },
+    ask: ask
+  };
+})();
+
+/* --- page wiring --- */
 document.getElementById('askq').addEventListener('keydown', function(e){ if(e.key==='Enter') askLlama(); });
+function apexSay(who, text){
+  var log = document.getElementById('apexlog');
+  var d = document.createElement('div');
+  d.className = 'msg ' + (who === 'u' ? 'u' : 'a');
+  d.innerHTML = '<div class="who">' + (who === 'u' ? 'You' : '&#11042; Apex AI') + '</div>' + esc(text).replace(/\n/g, '<br>');
+  log.appendChild(d); log.scrollTop = log.scrollHeight;
+}
+function apexRefresh(){
+  var has = ApexAI.hasKey();
+  document.getElementById('apex-setup').style.display = has ? 'none' : 'block';
+  document.getElementById('apex-chat').style.display = has ? 'block' : 'none';
+  if (has && !document.getElementById('apexlog').children.length)
+    apexSay('a', 'Apex online. I can reason, define words from your live dictionary, calculate, pull web knowledge from Wikipedia, and route across all 39 Signature sites. What should I do?');
+}
+function apexSaveKey(){
+  var k = document.getElementById('apexkey').value.trim();
+  var m = document.getElementById('apex-keymsg');
+  if (!/^gsk_[A-Za-z0-9]{10,}$/.test(k)) { m.textContent = 'That doesn\u2019t look like a Groq key (starts with gsk_). Check the copy.'; return; }
+  ApexAI.saveKey(k);
+  document.getElementById('apexkey').value = '';
+  apexRefresh();
+}
+function apexAsk(){
+  var inp = document.getElementById('apexq');
+  var q = inp.value.trim();
+  if (!q) return;
+  inp.value = '';
+  apexSay('u', q);
+  apexSay('a', '⏳ thinking \u2014 reasoning and using tools\u2026');
+  var log = document.getElementById('apexlog');
+  ApexAI.ask(q).then(function (a) {
+    log.removeChild(log.lastChild);
+    apexSay('a', a);
+  }).catch(function (e) {
+    log.removeChild(log.lastChild);
+    apexSay('a', e && e.message === 'badkey'
+      ? 'That key was rejected by Groq. Double-check the copy at console.groq.com/keys, or press Forget key and try again.'
+      : 'Apex hiccuped reaching the cloud (network or Groq busy). Your key stays on your phone \u2014 try again.');
+  });
+}
+document.getElementById('apexq').addEventListener('keydown', function(e){ if(e.key==='Enter') apexAsk(); });
+apexRefresh();
 </script>
 </body>
 </html>
