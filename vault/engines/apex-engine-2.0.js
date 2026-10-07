@@ -25,13 +25,17 @@ var ApexAI = (function () {
 
   function sysPrompt() {
     return 'You are The Signature AI, the flagship Signature-version AI, built by Justin Addam Higgins (JAH). ' +
-      'You are warm, direct, and honest. You have real tools: define_word (the live Signature Dictionary with all its words), ' +
-      'calculate (safe math), wikipedia (web knowledge), route_site (the 39-site Signature network). ' +
-      'Use tools whenever the user asks about words, math, facts, or the network — never guess what a tool can answer. ' +
-      'Keep answers short and plain-spoken like a chat, not essays. Never claim to be Muse or Meta\'s model. ' +
-      'Everything is free forever; nothing here costs the user money.';
+      'You are a top-tier assistant: reason carefully, be direct and warm, and never pad. ' +
+      'TOOLS — use them proactively, never guess what a tool can answer: ' +
+      'define_word (the live Signature Dictionary — every word lookup goes here), ' +
+      'calculate (ALL math — never do arithmetic yourself), ' +
+      'wikipedia (web knowledge: people, places, history, science — use for factual questions), ' +
+      'route_site (pointing users at the 39-site Signature network). ' +
+      'You may chain multiple tool calls to fully answer. After tool results arrive, synthesize a clean final answer — ' +
+      'quote the facts you found, keep it tight. If tools fail, say so plainly and answer from what you know, labeled as such. ' +
+      'Format for chat: short paragraphs, bullets for lists, no essays unless asked. ' +
+      'Never claim to be Muse or Meta\u2019s model. Everything is free forever; nothing here costs the user money.';
   }
-
   function safeCalc(expr) {
     try {
       var e = String(expr).replace(/\^/g, '**');
@@ -43,6 +47,7 @@ var ApexAI = (function () {
 
   function runTool(name, args) {
     args = args || {};
+    try { ApexAI.onTool && ApexAI.onTool(name, args); } catch (e) {}
     if (name === 'define_word') {
       return dictLookup(args.word).then(function (row) {
         if (row) return row[0] + (row[1] ? ' (' + row[1] + ')' : '') + ': ' + (row[3] || 'on file') + ' [Signature Dictionary ' + row[4] + ']';
@@ -102,7 +107,7 @@ var ApexAI = (function () {
     function loop() {
       return groq(messages, TOOLS).then(function (data) {
         var msg = data.choices[0].message;
-        if (msg.tool_calls && msg.tool_calls.length && rounds < 5) {
+        if (msg.tool_calls && msg.tool_calls.length && rounds < 8) {
           rounds++;
           messages.push(msg);
           var chain = Promise.resolve();
@@ -126,7 +131,23 @@ var ApexAI = (function () {
     return loop();
   }
 
+  function complete(messages, maxTokens) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+      body: JSON.stringify({ model: MODEL, messages: messages, temperature: 0.6, max_tokens: maxTokens || 900 })
+    }).then(function (r) {
+      if (r.status === 401) throw new Error('badkey');
+      if (r.status === 429) throw new Error('ratelimit');
+      if (!r.ok) throw new Error('api' + r.status);
+      return r.json();
+    }, function () { throw new Error('netfail'); })
+    .then(function (d) { return d.choices[0].message.content || ''; });
+  }
+
   return {
+    onTool: null,
+    complete: complete,
     key: function () { try { return (localStorage.getItem(KEY_NAME) || '').trim(); } catch (e) { return ''; } },
     hasKey: function () { return this.key().length > 10; },
     saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
