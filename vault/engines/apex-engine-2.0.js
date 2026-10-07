@@ -81,9 +81,17 @@ var ApexAI = (function () {
       body: JSON.stringify({ model: MODEL, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
     }).then(function (r) {
       if (r.status === 401) throw new Error('badkey');
+      if (r.status === 429) throw new Error('ratelimit');
       if (!r.ok) throw new Error('api' + r.status);
       return r.json();
-    });
+    }, function () { throw new Error('netfail'); });
+  }
+  function errText(e) {
+    var m = (e && e.message) || '';
+    if (m === 'badkey') return 'That key was rejected by Groq. Check the copy at console.groq.com/keys, or press Forget key and try a fresh one.';
+    if (m === 'ratelimit') return 'Groq rate limit hit (free tier busy). Wait a minute and try again — your key is fine.';
+    if (m.indexOf('api') === 0) return 'Groq returned error ' + m.slice(3) + '. Try again in a bit.';
+    return 'Your phone could not reach Groq at all (connection blocked or offline). Check your connection — or try full Chrome instead of the Facebook in-app browser, which sometimes blocks API calls.';
   }
 
   function ask(q) {
@@ -124,6 +132,7 @@ var ApexAI = (function () {
     saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
     forgetKey: function () { try { localStorage.removeItem(KEY_NAME); } catch (e) {} hist = []; },
     clearHist: function () { hist = []; },
-    ask: ask
+    ask: ask,
+    errText: errText
   };
 })();
