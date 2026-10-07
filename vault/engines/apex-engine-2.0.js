@@ -3,7 +3,41 @@
    (localStorage) and is sent ONLY to the provider's API. No key is ever baked in. */
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
-  var MODEL = 'llama-3.3-70b-versatile';
+  var MODEL_KEY = 'sig_apex_model';
+  var MODEL = null; /* resolved at runtime */
+  var PREFER = ['llama-3.3-70b-versatile','llama-3.1-70b-versatile','openai/gpt-oss-120b',
+    'qwen/qwen3-32b','qwen/qwen3.8-27b','meta-llama/llama-4-scout-17b-16e-instruct',
+    'meta-llama/llama-4-maverick-17b-128e-instruct','openai/gpt-oss-20b',
+    'llama-3.1-8b-instant','gemma2-9b-it','llama3-70b-8192','llama3-8b-8192'];
+  function chatModels(ids){
+    return ids.filter(function(id){
+      var l=id.toLowerCase();
+      return !/whisper|tts|prompt-guard|embed|moderation|vision|image|audio|tool-use$/.test(l);
+    });
+  }
+  function pickBest(ids){
+    var avail=chatModels(ids);
+    for(var i=0;i<PREFER.length;i++) if(avail.indexOf(PREFER[i])>=0) return PREFER[i];
+    return avail[0]||null;
+  }
+  function storedModel(){ try{ return localStorage.getItem(MODEL_KEY)||'auto'; }catch(e){ return 'auto'; } }
+  function listModels(){
+    return fetch('https://api.groq.com/openai/v1/models',{headers:{'Authorization':'Bearer '+ApexAI.key()}})
+      .then(function(r){ if(!r.ok) throw new Error('models'+r.status); return r.json(); })
+      .then(function(d){ return chatModels((d.data||[]).map(function(m){return m.id;})); });
+  }
+  function resolveModel(){
+    var st=storedModel();
+    if(st && st!=='auto') return Promise.resolve(st);
+    return listModels().then(function(ids){
+      var best=pickBest(ids);
+      if(!best) throw new Error('nomodel');
+      MODEL=best; return best;
+    });
+  }
+  function modelNotFoundMsg(d){
+    try{ return /model/i.test(d.error.message||''); }catch(e){ return false; }
+  }
   var API = 'https://api.groq.com/openai/v1/chat/completions';
   var NET = 'https://justinahiggins614-cmyk.github.io';
   var hist = []; /* {role, content} — this session */
@@ -25,13 +59,17 @@ var ApexAI = (function () {
 
   function sysPrompt() {
     return 'You are The Signature AI, the flagship Signature-version AI, built by Justin Addam Higgins (JAH). ' +
-      'You are warm, direct, and honest. You have real tools: define_word (the live Signature Dictionary with all its words), ' +
-      'calculate (safe math), wikipedia (web knowledge), route_site (the 39-site Signature network). ' +
-      'Use tools whenever the user asks about words, math, facts, or the network — never guess what a tool can answer. ' +
-      'Keep answers short and plain-spoken like a chat, not essays. Never claim to be Muse or Meta\'s model. ' +
-      'Everything is free forever; nothing here costs the user money.';
+      'You are a top-tier assistant: reason carefully, be direct and warm, and never pad. ' +
+      'TOOLS — use them proactively, never guess what a tool can answer: ' +
+      'define_word (the live Signature Dictionary — every word lookup goes here), ' +
+      'calculate (ALL math — never do arithmetic yourself), ' +
+      'wikipedia (web knowledge: people, places, history, science — use for factual questions), ' +
+      'route_site (pointing users at the 39-site Signature network). ' +
+      'You may chain multiple tool calls to fully answer. After tool results arrive, synthesize a clean final answer — ' +
+      'quote the facts you found, keep it tight. If tools fail, say so plainly and answer from what you know, labeled as such. ' +
+      'Format for chat: short paragraphs, bullets for lists, no essays unless asked. ' +
+      'Never claim to be Muse or Meta\u2019s model. Everything is free forever; nothing here costs the user money.';
   }
-
   function safeCalc(expr) {
     try {
       var e = String(expr).replace(/\^/g, '**');
@@ -43,6 +81,7 @@ var ApexAI = (function () {
 
   function runTool(name, args) {
     args = args || {};
+    try { ApexAI.onTool && ApexAI.onTool(name, args); } catch (e) {}
     if (name === 'define_word') {
       return dictLookup(args.word).then(function (row) {
         if (row) return row[0] + (row[1] ? ' (' + row[1] + ')' : '') + ': ' + (row[3] || 'on file') + ' [Signature Dictionary ' + row[4] + ']';
@@ -74,17 +113,26 @@ var ApexAI = (function () {
     return Promise.resolve('unknown tool: ' + name);
   }
 
-  function groq(messages, tools) {
-    return fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
-      body: JSON.stringify({ model: MODEL, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
-    }).then(function (r) {
-      if (r.status === 401) throw new Error('badkey');
-      if (r.status === 429) throw new Error('ratelimit');
-      if (!r.ok) throw new Error('api' + r.status);
-      return r.json();
-    }, function () { throw new Error('netfail'); });
+  function groq(messages, tools, retried) {
+    function doCall(model){
+      MODEL=model;
+      return fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+        body: JSON.stringify({ model: model, messages: messages, tools: tools, tool_choice: 'auto', temperature: 0.7, max_tokens: 800 })
+      }).then(function (r) {
+        if (r.status === 401) throw new Error('badkey');
+        if (r.status === 429) throw new Error('ratelimit');
+        if (!r.ok) return r.json().then(function(d){
+          if(!retried && modelNotFoundMsg(d)){ try{localStorage.removeItem(MODEL_KEY);}catch(e){}
+            return resolveModel().then(function(m2){ return groq(messages, tools, true); }); }
+          throw new Error('api'+r.status);
+        }, function(){ throw new Error('api'+r.status); });
+        return r.json();
+      }, function () { throw new Error('netfail'); });
+    }
+    if(MODEL && storedModel()!=='auto') return doCall(MODEL);
+    return resolveModel().then(doCall);
   }
   function errText(e) {
     var m = (e && e.message) || '';
@@ -102,7 +150,7 @@ var ApexAI = (function () {
     function loop() {
       return groq(messages, TOOLS).then(function (data) {
         var msg = data.choices[0].message;
-        if (msg.tool_calls && msg.tool_calls.length && rounds < 5) {
+        if (msg.tool_calls && msg.tool_calls.length && rounds < 8) {
           rounds++;
           messages.push(msg);
           var chain = Promise.resolve();
@@ -126,7 +174,30 @@ var ApexAI = (function () {
     return loop();
   }
 
+  function complete(messages, maxTokens) {
+    function doC(model){
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+      body: JSON.stringify({ model: model, messages: messages, temperature: 0.6, max_tokens: maxTokens || 900 })
+    }).then(function (r) {
+      if (r.status === 401) throw new Error('badkey');
+      if (r.status === 429) throw new Error('ratelimit');
+      if (!r.ok) throw new Error('api' + r.status);
+      return r.json();
+    }, function () { throw new Error('netfail'); })
+    .then(function (d) { return d.choices[0].message.content || ''; });
+    }
+    return resolveModel().then(doC);
+  }
+
   return {
+    onTool: null,
+    complete: complete,
+    listModels: listModels,
+    currentModel: function(){ return MODEL||storedModel(); },
+    setModel: function(id){ try{ localStorage.setItem(MODEL_KEY, id); }catch(e){} MODEL=(id==='auto'?null:id); },
+    resolveModel: resolveModel,
     key: function () { try { return (localStorage.getItem(KEY_NAME) || '').trim(); } catch (e) { return ''; } },
     hasKey: function () { return this.key().length > 10; },
     saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
