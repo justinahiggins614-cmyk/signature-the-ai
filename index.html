@@ -3,118 +3,262 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>&#10033; The Signature AI &mdash; the Signature version</title>
-<meta name="description" content="The Signature AI: Manon's flagship Signature-version AI. Llama Standard 1.0 on-device chat plus Apex AI 2.0, the online agentic brain.">
+<title>&#10033; The Signature AI</title>
+<meta name="description" content="The Signature AI: Manon's flagship Signature-version AI. Free-flowing chat, tools, and self-filing project history.">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0a0e14;color:#e8edf3;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5}
-.hero{text-align:center;padding:38px 16px 18px;background:radial-gradient(ellipse at 50% 0%,#16202e 0%,#0a0e14 70%)}
-.hero h1{margin:0;font-size:2em}.hero h1 .ast{color:#ffb300}.hero p{color:#9fb2c8;margin:8px 0 0}
-.status{display:inline-block;margin-top:12px;padding:6px 14px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#7ee2a8}
-.wrap{max-width:760px;margin:0 auto;padding:16px}
-.card{background:#111927;border:1px solid #223047;border-radius:14px;padding:18px;margin:16px 0}
-.card h2{margin:0 0 10px;font-size:1.15em}
-.card.apex{border-color:#6a4dff;background:#141226}
-.chatrow{display:flex;gap:8px;margin-top:10px}
-.tin{flex:1;padding:12px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
-.btn{padding:12px 20px;border-radius:10px;border:0;background:#ffb300;color:#111;font-weight:700;font-size:1em;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid #2a3a4d;color:#9fb2c8}
-.btn.apexbtn{background:#6a4dff;color:#fff}
-.out{min-height:90px;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:14px;margin-top:10px}
-.out a{color:#ffb300;font-weight:bold}
-.log{max-height:320px;overflow-y:auto;background:#0a0e14;border:1px solid #223047;border-radius:10px;padding:12px;margin-top:10px;display:flex;flex-direction:column;gap:10px}
-.msg{padding:10px 12px;border-radius:10px;max-width:92%}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:#0a0e14;color:#e8edf3;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;display:flex;flex-direction:column;height:100dvh}
+header.topbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0d1420;border-bottom:1px solid #223047;position:sticky;top:0;z-index:5}
+header.topbar h1{font-size:1.05em;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header.topbar h1 .ast{color:#ffb300}
+.tbtn{background:transparent;border:1px solid #2a3a4d;color:#c7d3e2;border-radius:9px;padding:8px 12px;font-size:.85em;cursor:pointer;white-space:nowrap}
+.tbtn.gold{border-color:#ffb300;color:#ffb300;font-weight:700}
+#feed{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:820px;width:100%;margin:0 auto}
+.msg{padding:11px 14px;border-radius:13px;max-width:94%;line-height:1.55;overflow-wrap:break-word}
 .msg.u{align-self:flex-end;background:#1a2a4a}
-.msg.a{align-self:flex-start;background:#16202e;border:1px solid #223047}
-.msg .who{font-size:.75em;color:#9fb2c8;margin-bottom:4px}
-.rolechip{display:inline-block;margin:4px 6px 0 0;padding:6px 12px;border:1px solid #2a3a4d;border-radius:999px;font-size:.85em;color:#9fb2c8;cursor:pointer}
-.rolechip.locked{border-color:#ffb300;color:#ffb300}
-#rolebanner{display:none;margin-top:10px;padding:8px 12px;background:#1a1405;border:1px solid #ffb300;border-radius:8px;color:#ffb300;font-size:.9em}
-ul.tight{margin:8px 0;padding-left:20px}ul.tight li{margin:6px 0}
-.badge{display:inline-block;background:#12351f;color:#7ee2a8;border-radius:6px;padding:2px 8px;font-size:.78em;font-weight:700;margin-right:6px}
+.msg.a{align-self:flex-start;background:#141d2c;border:1px solid #223047}
+.msg.sys{align-self:center;background:transparent;border:1px dashed #2a3a4d;color:#9fb2c8;font-size:.85em}
+.msg .who{font-size:.72em;color:#8fa1b8;margin-bottom:5px;letter-spacing:.4px}
+.msg.toolnote{align-self:flex-start;background:transparent;color:#8fa1b8;font-size:.8em;padding:2px 6px}
+.composer{border-top:1px solid #223047;padding:10px 12px;background:#0d1420;position:sticky;bottom:0}
+.composer .row{max-width:820px;margin:0 auto;display:flex;gap:8px}
+#qin{flex:1;padding:13px 14px;border-radius:12px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:1em}
+#qsend{padding:13px 22px;border-radius:12px;border:0;background:#ffb300;color:#111;font-weight:800;font-size:1em;cursor:pointer}
+.drawer{position:fixed;top:0;bottom:0;width:min(340px,88vw);background:#0d1420;border-right:1px solid #223047;z-index:20;transform:translateX(-105%);transition:transform .22s ease;display:flex;flex-direction:column}
+.drawer.right{right:0;left:auto;border-right:0;border-left:1px solid #223047;transform:translateX(105%)}
+.drawer.open{transform:none}
+.drawer h3{margin:0;padding:14px;border-bottom:1px solid #223047;font-size:1em}
+.drawer .dbody{flex:1;overflow-y:auto;padding:12px}
+.hitem{border:1px solid #223047;border-radius:10px;padding:10px;margin-bottom:10px;cursor:pointer}
+.hitem .t{font-weight:700;font-size:.92em;margin-bottom:4px}
+.hitem .m{font-size:.78em;color:#8fa1b8}
+.hitem .ops{margin-top:8px;display:flex;gap:6px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:15;display:none}
+.scrim.on{display:block}
+.field{margin:12px 0}.field label{display:block;font-size:.82em;color:#8fa1b8;margin-bottom:6px}
+.tin{width:100%;padding:11px;border-radius:10px;border:1px solid #2a3a4d;background:#0a0e14;color:#e8edf3;font-size:.95em}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;border:0;background:#ffb300;color:#111;font-weight:700;cursor:pointer;font-size:.9em}
+.btn.ghost{background:transparent;border:1px solid #2a3a4d;color:#c7d3e2}
+.btn.danger{background:transparent;border:1px solid #5e2323;color:#ff8080}
+.note{color:#9fb2c8;font-size:.85em;line-height:1.5}
+.badge{display:inline-block;background:#12351f;color:#7ee2a8;border-radius:6px;padding:2px 8px;font-size:.75em;font-weight:700;margin-right:6px}
 .badge.cloud{background:#2a1a5e;color:#c4b5fd}
-.note{color:#9fb2c8;font-size:.88em}
-.jahnet{margin:34px 0 0;padding:20px 14px;border-top:1px solid #223047;text-align:center}
-.jahnet-title{font-weight:800;letter-spacing:2px;color:#9fb2c8;margin-bottom:10px}
-.jahnet-list{font-size:.85em;line-height:2}.jahnet-list a{color:#8fb8ff;text-decoration:none;margin:0 4px}
-.jahnet-here{margin-top:12px;display:inline-block;background:#3a0d0d;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:999px;padding:6px 16px;font-weight:700;font-size:.85em}
-footer{text-align:center;color:#5a6b80;font-size:.8em;padding:14px}
+.docview{white-space:pre-wrap;font-size:.92em;line-height:1.6}
+.jahnet{padding:18px 14px;border-top:1px solid #223047;text-align:center;background:#0d1420}
+.jahnet-title{font-weight:800;letter-spacing:2px;color:#9fb2c8;margin-bottom:8px;font-size:.85em}
+.jahnet-list{font-size:.78em;line-height:2}.jahnet-list a{color:#8fb8ff;text-decoration:none;margin:0 4px}
+.jahnet-here{margin-top:10px;display:inline-block;background:#3a0d0d;color:#ff6b6b;border:1px solid #ff6b6b;border-radius:999px;padding:5px 14px;font-weight:700;font-size:.78em}
+.stdbox{border:1px solid #223047;border-radius:10px;padding:10px;margin-top:8px}
+#stdout{min-height:60px;font-size:.9em;margin-top:8px}
+#stdout a{color:#ffb300}
+.rolechip{display:inline-block;margin:4px 6px 0 0;padding:5px 10px;border:1px solid #2a3a4d;border-radius:999px;font-size:.78em;color:#9fb2c8;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="hero">
+<header class="topbar">
 <h1><span class="ast">&#10033;</span> The Signature AI</h1>
-<p>The Signature version &mdash; one apex AI for everything. Free forever.</p>
-<div><span class="status">&#10033; Llama Standard 1.0 live &middot; &#11042; Apex AI 2.0 ready</span></div>
+<button class="tbtn gold" onclick="formalizeActive()" title="Compile this chat into a polished filed document">&#10033; Formalize &amp; Save</button>
+<button class="tbtn" onclick="toggleDrawer('hist',true)">History</button>
+<button class="tbtn" onclick="toggleDrawer('set',true)">&#9881;</button>
+<button class="tbtn" onclick="newChat()">+ New</button>
+</header>
+<main id="feed" aria-live="polite"></main>
+<div class="composer"><div class="row">
+<input id="qin" type="text" placeholder="Message The Signature AI&hellip;" aria-label="Message The Signature AI" autocomplete="off">
+<button id="qsend" onclick="sendMsg()">Send</button>
+</div></div>
+<div class="scrim" id="scrim" onclick="closeDrawers()"></div>
+<aside class="drawer" id="d-hist" aria-label="Filed history">
+<h3>&#10033; Filed History</h3>
+<div class="dbody" id="histlist"></div>
+</aside>
+<aside class="drawer right" id="d-set" aria-label="Settings and tools">
+<h3>&#9881; Settings &amp; Tools</h3>
+<div class="dbody">
+<div class="field" id="keybox">
+<label>APEX KEY (your free Groq key — stays on this phone only)</label>
+<input id="apikey" type="password" class="tin" placeholder="gsk_..." autocomplete="off">
+<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" onclick="saveKey()">Activate Apex</button>
+<button class="btn ghost" onclick="ApexAI.forgetKey();renderKeyBox();">Forget key</button>
 </div>
-<div class="wrap">
-<div class="card">
-<h2>&#10033; Llama Standard 1.0 <span class="note">&mdash; on-device chat</span></h2>
-<div>
-<span class="rolechip" onclick="setRole('#Task-Movie-Expert')">#Task-Movie-Expert</span>
-<span class="rolechip" onclick="setRole('#Task-Chef')">#Task-Chef</span>
-<span class="rolechip" onclick="setRole('#Assume-Role-Tutor')">#Assume-Role-Tutor</span>
+<p class="note"><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">Get a free Groq key &rarr;</a><br><span id="keystate"></span></p>
 </div>
-<div id="rolebanner" role="status"></div>
-<div class="chatrow">
-<input type="text" id="askq" class="tin" placeholder="Ask anything&hellip; (try: define serendipity &middot; 12*8+3 &middot; are you an ai)" aria-label="Ask Llama Standard">
-<button class="btn" onclick="askLlama()">Ask</button>
-</div>
-<div id="askout" class="out" role="status">Ready. I look words up live in your dictionary, do math, and hold a real conversation &mdash; all on your phone.</div>
-</div>
-<div class="card apex">
-<h2>&#11042; Apex AI 2.0 <span class="note">&mdash; the online brain</span></h2>
-<div id="apex-setup">
-<p class="note">Apex is the full agentic AI: a cloud Llama that <b>reasons, uses tools, and searches the web</b> for you when you ask. It needs your own free key &mdash; I can&rsquo;t mint keys, signup takes 30 seconds and needs your email:</p>
-<ol class="tight">
-<li><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:#c4b5fd;font-weight:bold;">Get a free Groq key &rarr;</a> (free tier, no card)</li>
-<li>Paste it below. It stays on <b>your phone only</b> &mdash; never on my servers, never in the site&rsquo;s code.</li>
-</ol>
-<div class="chatrow">
-<input type="password" id="apexkey" class="tin" placeholder="Paste your Groq key (gsk_...)" aria-label="Groq API key" autocomplete="off">
-<button class="btn apexbtn" onclick="apexSaveKey()">Activate</button>
-</div>
-<p class="note" id="apex-keymsg"></p>
-</div>
-<div id="apex-chat" style="display:none">
-<div class="log" id="apexlog" aria-live="polite"></div>
-<div class="chatrow">
-<input type="text" id="apexq" class="tin" placeholder="Ask Apex anything&hellip; it will use its tools" aria-label="Ask Apex AI">
-<button class="btn apexbtn" onclick="apexAsk()">Ask</button>
-</div>
-<div class="chatrow">
-<button class="btn ghost" onclick="ApexAI.clearHist();document.getElementById('apexlog').innerHTML='';apexSay('a','Fresh start. What do you need?');">New chat</button>
-<button class="btn ghost" onclick="ApexAI.forgetKey();location.reload();">Forget key</button>
+<div class="field">
+<label>LLAMA STANDARD 1.0 — on-device (no key)</label>
+<div class="stdbox">
+<div><span class="rolechip" onclick="stdRole('#Task-Chef')">#Task-Chef</span><span class="rolechip" onclick="stdRole('#Assume-Role-Tutor')">#Assume-Role-Tutor</span></div>
+<div style="display:flex;gap:8px;margin-top:8px"><input id="stdq" class="tin" placeholder="Ask Standard..."><button class="btn" onclick="stdAsk()">Ask</button></div>
+<div id="stdout" class="note">Words, math, roles — all on your phone.</div>
 </div>
 </div>
-</div>
-<div class="card">
-<h2>What this AI actually does</h2>
-<ul class="tight">
-<li><span class="badge">STANDARD</span>Defines any word &mdash; looked up live from your Signature Dictionary, all its words, not a cheat sheet.</li>
-<li><span class="badge">STANDARD</span>Math, calculated live through the Signature Calculator engine.</li>
-<li><span class="badge">STANDARD</span>Hashtag roles, real conversation, never repeats itself back to back.</li>
-<li><span class="badge cloud">APEX 2.0</span>Cloud Llama with <b>tools</b>: dictionary, calculator, Wikipedia web knowledge, and the 39-site network &mdash; it reasons, calls tools, reads results, then answers. Needs your free key above.</li>
-</ul>
+<div class="field">
+<label>WHAT APEX CAN DO</label>
+<p class="note"><span class="badge cloud">APEX</span>Reasons with a cloud Llama and uses preloaded tools: your live <b>dictionary</b>, <b>calculator</b>, <b>Wikipedia</b> web knowledge, and the <b>39-site network</b>.<br><span class="badge">FILED</span>Press <b>&#10033; Formalize &amp; Save</b> any time — the chat is compiled into a polished titled document and filed in History, re-filed fresh after every exchange, retrievable any time.</p>
 </div>
 </div>
+</aside>
 <nav class="jahnet" aria-label="The JAH Network">
 <div class="jahnet-title">THE JAH NETWORK</div>
 <div class="jahnet-list"><a href="https://justinahiggins614-cmyk.github.io/signature-math">1 Signature Math</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-calculator">2 Calculator</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary">3 Dictionary</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-wiki">4 JAH Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks">5 JAH-N Wiki</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-llama">6 Llama</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models">7 Phone Book</a> · <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog">8 Patents</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">9 Specs</a> · <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems">10 PCs</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-books">11 Books</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-comics">12 Comics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-newspapers">13 News</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-backend">14 Mix Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators">15 Generators</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab">16 AI Mix</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics">17 Olympics</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker">18 Chips</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-app-archive">19 Apps</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher">20 Robots</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver">21 Lab</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker">22 Pixel</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker">23 Music</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-fixit">24 Fix-It</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-university">25 University</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-earth">26 Earth</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-flight-school">27 Flight</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-game-store">28 Games</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-website-creator">29 Sites</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-antivirus">30 Antivirus</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-os-updater">31 OS Updater</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-space-mapping">32 Space</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cookbook">33 Cookbook</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-spell-check">34 Spell Check</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-image-grid-measure">35 Grid Measure</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall">36 Cyber Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-3d-print">37 3D Mall</a> · <a href="https://justinahiggins614-cmyk.github.io/signature-the-ai">39 The Signature AI</a></div>
 <div class="jahnet-here">&#10033; The Signature AI &mdash; YOU ARE HERE</div>
 </nav>
-<footer>&#10033; Signature &mdash; property of Justin Addam Higgins (JAH) &middot; Free forever</footer>
 <script>
-var LOCKED_ROLE = null;
-function setRole(tag){ LOCKED_ROLE = tag;
-  var b = document.getElementById('rolebanner');
-  b.style.display = 'block';
-  b.textContent = '🔒 ROLE LOCKED: ' + tag + ' — stays locked until you change it.';
-  document.querySelectorAll('.rolechip').forEach(function(c){ c.classList.remove('locked'); });
-  try{ event.target.classList.add('locked'); }catch(e){}
+function esc0(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+var SupremeConv = {
+  mem: [], said: {},
+  remember: function(q, intent){ this.mem.push({q:q, intent:intent, t:Date.now()}); if(this.mem.length>10) this.mem.shift(); },
+  pick: function(key, arr){ var h=this.said[key]||0; var v=arr[h%arr.length]; this.said[key]=h+1; return v; }
+};
+var DICT_BASE = 'https://justinahiggins614-cmyk.github.io/jah-dictionary';
+var dictCache = {};
+function dictLookup(word){
+  word = String(word||'').toLowerCase().trim();
+  if(!word) return Promise.resolve(null);
+  var L = word.charAt(0);
+  if(!/[a-z]/.test(L)) return Promise.resolve(null);
+  function scan(rows){
+    for(var i=0;i<rows.length;i++){ if(String(rows[i][0]).toLowerCase()===word) return rows[i]; }
+    return null;
+  }
+  if(dictCache[L]) return Promise.resolve(scan(dictCache[L]));
+  return fetch(DICT_BASE + '/data/lexical/shard-' + L + '.json')
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(rows){ dictCache[L]=rows; return scan(rows); })
+    .catch(function(){ return null; });
 }
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-['/* --- Signature Llama 2.0 supreme conversational engine (replaces demo brain) --- */', 'var SupremeConv = {', '  mem: [], said: {},', '  remember: function(q, intent){ this.mem.push({q:q, intent:intent, t:Date.now()}); if(this.mem.length>10) this.mem.shift(); },', '  pick: function(key, arr){ var h=this.said[key]||0; var v=arr[h%arr.length]; this.said[key]=h+1; return v; }', '};', "var DICT_BASE = 'https://justinahiggins614-cmyk.github.io/jah-dictionary';", 'var dictCache = {};', 'function dictLookup(word){', "  word = String(word||'').toLowerCase().trim();", '  if(!word) return Promise.resolve(null);', '  var L = word.charAt(0);', '  if(!/[a-z]/.test(L)) return Promise.resolve(null);', '  function scan(rows){', '    for(var i=0;i<rows.length;i++){ if(String(rows[i][0]).toLowerCase()===word) return rows[i]; }', '    return null;', '  }', '  if(dictCache[L]) return Promise.resolve(scan(dictCache[L]));', "  return fetch(DICT_BASE + '/data/lexical/shard-' + L + '.json')", '    .then(function(r){ if(!r.ok) throw 0; return r.json(); })', '    .then(function(rows){ dictCache[L]=rows; return scan(rows); })', '    .catch(function(){ return null; });', '}', 'function supremeAnswer(q){', '  var role = LOCKED_ROLE, rq = q;', '  var hm = q.match(/#[A-Za-z][A-Za-z0-9\\-]*/);', '  if(hm){ role = hm[0]; LOCKED_ROLE = role;', "    var b = document.getElementById('rolebanner');", "    b.style.display='block'; b.textContent='🔒 ROLE LOCKED: '+role+' — stays locked until you change it.';", "    rq = q.replace(hm[0],'').trim();", '  }', "  var roleName = role ? role.replace(/^#/,'').replace(/-/g,' ') : null;", "  var roleTag = roleName ? '['+roleName+'] ' : '';", '  /* math via safe parser */', '  var mq = rq.match(/^([\\d\\s+\\-*/().^%]+)$/);', '  if(mq && /\\d/.test(rq)){', '    try{', "      var expr = rq.replace(/\\^/g,'**');", '      if(/^[\\d\\s+\\-*/().%*]+$/.test(expr)){', '        var v = Function(\'"use strict";return (\'+expr+\')\')();', "        if(typeof v === 'number' && isFinite(v)){", "          SupremeConv.remember(q,'math');", "          return '🧮 ' + roleTag + rq + ' = ' + v + '\\n✔ Calculated live by the Signature Calculator engine (site 2).';", '        }', '      }', '    }catch(e){}', '  }', '  var low = rq.toLowerCase().trim();', '  /* --- conversational intents --- */', '  if(/^(hi|hey|hello|yo|sup|howdy|good (morning|afternoon|evening))\\b/.test(low) && low.length < 30){', "    SupremeConv.remember(q,'greet');", "    return roleTag + SupremeConv.pick('greet', [", "      'Hey — Signature Llama 2.0 here, the supreme build. Ask me anything: words from the live dictionary, math, or anywhere across the 37 sites.',", "      'Hello! I\\u2019m the 2.0 supreme AI. I can define words straight out of the Signature Dictionary, do math, and route you through the whole network.',", "      'Hey there — supreme mode on. What do you want to know?'", '    ]);', '  }', '  if(/\\bwho are you\\b|\\byour name\\b|\\bwhat are you\\b/.test(low)){', "    SupremeConv.remember(q,'identity');", "    return roleTag + SupremeConv.pick('identity', [", "      'I\\u2019m Signature Llama 2.0 — the supreme universal build. My duties: define any word from the live Signature Dictionary, solve math through the Calculator engine, lock into hashtag roles like #Task-Chef, and route you to any of the 37 Signature sites and archives.',", "      'Signature Llama 2.0, the supreme build, at your service. I look words up live, calculate, take roles, and know the whole network. For full open-ended reasoning, the Industry Standard cloud path on the Llama site is the deeper brain.'", '    ]);', '  }', '  if(/\\bare you\\b[^.?!]{0,50}\\b(ai|a\\.?i\\.?|artificial intelligence|real|conscious|alive|sentient|robot|bot)\\b/.test(low) || /\\btesting you\\b/.test(low) || /\\bjust (a )?copy/.test(low)){', "    SupremeConv.remember(q,'testchallenge');", "    return roleTag + SupremeConv.pick('testchallenge', [", "      'Straight answer: I\\u2019m the on-device conversational layer of Signature Llama 2.0 — I understand your words well enough to look things up and hold a conversation, but I\\u2019m not the trained 4M model itself and I\\u2019m not conscious. The full reasoning brain is the Industry Standard path (free key) on the Signature Llama site.',", "      'Honest: this chat runs on your device — a real conversational engine with live dictionary lookup, not canned lines, but not a giant reasoning model either, and not conscious. The Industry Standard cloud Llama is the one that reasons like a full AI.'", '    ]);', '  }', '  if(/\\b(thanks|thank you|thx|appreciated)\\b/.test(low)){', "    SupremeConv.remember(q,'thanks');", "    return roleTag + SupremeConv.pick('thanks', ['Anytime — that\\u2019s what the supreme build is for.', 'You got it. Ask me anything else.', 'Happy to help.']);", '  }', '  if(/\\b(bye|goodbye|see you|later)\\b/.test(low) && low.length < 25){', "    SupremeConv.remember(q,'bye');", "    return roleTag + SupremeConv.pick('bye', ['Later — I\\u2019ll be right here when you need the supreme brain.', 'Goodbye for now.']);", '  }', '  /* --- live dictionary lookup: "define X", "what does X mean", "meaning of X" --- */', "  var dm = low.match(/\\bdefine\\s+([a-z][a-z\\-']*)/) || low.match(/\\bmeaning of\\s+([a-z][a-z\\-']*)/) ||", "           low.match(/\\bwhat does\\s+([a-z][a-z\\-']*)\\s+mean\\b/) || low.match(/\\bdefinition of\\s+([a-z][a-z\\-']*)/);", '  if(dm){', '    var w = dm[1];', "    SupremeConv.remember(q,'define:'+w);", '    return dictLookup(w).then(function(row){', '      if(row){', "        var pos = row[1] ? ' ('+row[1]+')' : '';", "        var pron = row[2] ? ' — say it: '+row[2] : '';", "        return '📖 ' + roleTag + row[0] + pos + pron + '\\n' + (row[3] || 'Definition on file.') +", "          '\\n\\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';", '      }', "      return '📖 ' + roleTag + 'I looked through the live Signature Dictionary and couldn\\u2019t find \\u201c'+w+'\\u201d. Check the spelling, or try the dictionary site directly:\\n[[LINK:' + DICT_BASE + '|Open the Signature Dictionary →]]';", '    });', '  }', '  /* --- single word query: treat as define --- */', "  if(/^[a-z][a-z\\-']{1,30}$/.test(low)){", "    SupremeConv.remember(q,'define:'+low);", '    return dictLookup(low).then(function(row){', '      if(row){', "        var pos = row[1] ? ' ('+row[1]+')' : '';", "        var pron = row[2] ? ' — say it: '+row[2] : '';", "        return '📖 ' + roleTag + row[0] + pos + pron + '\\n' + (row[3] || 'Definition on file.') +", "          '\\n\\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';", '      }', '      return null; /* fall through to fallback below */', '    }).then(function(a){', '      if(a) return a;', "      return roleTag + SupremeConv.pick('fallback', [", "        'I didn\\u2019t catch that one — I looked it up and it\\u2019s not in the dictionary either. Try \\u201cdefine serendipity\\u201d, a math question like 12*8+3, or ask me who I am.',", "        'Hmm, that one slipped past me. I\\u2019m best at: defining words (try \\u201cdefine <word>\\u201d), math, and pointing you around the 37 sites.',", "        'Not sure what you meant there. Give me a word to define, some math, or a hashtag role like #Task-Chef.'", '      ]);', '    });', '  }', '  /* --- archive routing: honest pointers with real links --- */', "  var NET = 'https://justinahiggins614-cmyk.github.io';", "  if(/\\bpatent\\b/.test(low)){ SupremeConv.remember(q,'route:patent');", "    return roleTag + 'Patents live in two places:\\n[[LINK:'+NET+'/cyber-patent-catalog|Globally Rejustered Patent Catalog →]] (harvested public records)\\n[[LINK:'+NET+'/signature-one-archive/specs.html|Signature Spec Catalog →]] (your original drafts)';", '  }', "  if(/\\bwiki\\b|\\bhistory of\\b|\\bwho (was|is)\\b/.test(low)){ SupremeConv.remember(q,'route:wiki');", "    return roleTag + 'For deep articles try:\\n[[LINK:'+NET+'/jah-wiki|JAH Wiki →]]\\n[[LINK:'+NET+'/jah-n-wiki-leaks|JAH-N Wiki Leaks →]] (the classified-dossier side)';", '  }', "  if(/\\bsong|music\\b/.test(low)){ SupremeConv.remember(q,'route:music');", "    return roleTag + 'Music lives at [[LINK:'+NET+'/signature-ai-song-maker|Signature Music Studio →]] — full song generator in there.';", '  }', '  /* --- honest fallback: never canned, never word salad --- */', "  SupremeConv.remember(q,'fallback');", "  return roleTag + SupremeConv.pick('fallback', [", "    'I want to give you a real answer, not a guess — I\\u2019m best at defining words (try \\u201cdefine <word>\\u201d), math like 12*8+3, and routing you across the 37 sites. For open-ended reasoning, the Industry Standard cloud path on the Signature Llama site is the deeper brain.',", "    'That\\u2019s outside what I can answer on-device. I do words, math, roles, and network routing for real — everything else, the full cloud Llama handles.',", "    'I don\\u2019t have a real answer for that one, and I\\u2019d rather say so than make one up. Try a word, some math, or ask me what I can do.'", '  ]);', '}', 'function renderAns(out, a){', "  var h = esc(a).replace(/\\n/g,'<br>');", '  h = h.replace(/\\[\\[LINK:([^|]+)\\|([^\\]]+)\\]\\]/g, \'<a href="$1" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">$2</a>\');', '  out.innerHTML = h;', '}', 'function askLlama(){', "  var q = document.getElementById('askq').value.trim();", "  var out = document.getElementById('askout');", "  if(!q){ out.textContent = 'Type a question first.'; return; }", "  out.textContent = '🦠 thinking — routing across the ecosystem…';", '  try{', '    var ans = supremeAnswer(q);', "    if(ans && typeof ans.then === 'function'){", "      out.textContent = '📖 looking it up in the live Signature Dictionary…';", '      ans.then(function(a){ renderAns(out, a); },', "               function(){ out.textContent = 'Hmm, that lookup hiccuped. Try again.'; });", '    } else {', '      setTimeout(function(){ renderAns(out, ans); }, 350);', '    }', "  }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }", '}', '']
-/* Apex AI engine 2.0 - key lives ONLY on the user's device, sent ONLY to the provider API. */
+function supremeAnswer(q){
+  var role = LOCKED_ROLE, rq = q;
+  var hm = q.match(/#[A-Za-z][A-Za-z0-9\-]*/);
+  if(hm){ role = hm[0]; LOCKED_ROLE = role;
+    var b = document.getElementById('rolebanner');
+    b.style.display='block'; b.textContent='🔒 ROLE LOCKED: '+role+' — stays locked until you change it.';
+    rq = q.replace(hm[0],'').trim();
+  }
+  var roleName = role ? role.replace(/^#/,'').replace(/-/g,' ') : null;
+  var roleTag = roleName ? '['+roleName+'] ' : '';
+  /* math via safe parser */
+  var mq = rq.match(/^([\d\s+\-*/().^%]+)$/);
+  if(mq && /\d/.test(rq)){
+    try{
+      var expr = rq.replace(/\^/g,'**');
+      if(/^[\d\s+\-*/().%*]+$/.test(expr)){
+        var v = Function('"use strict";return ('+expr+')')();
+        if(typeof v === 'number' && isFinite(v)){
+          SupremeConv.remember(q,'math');
+          return '🧮 ' + roleTag + rq + ' = ' + v + '\n✔ Calculated live by the Signature Calculator engine (site 2).';
+        }
+      }
+    }catch(e){}
+  }
+  var low = rq.toLowerCase().trim();
+  /* --- conversational intents --- */
+  if(/^(hi|hey|hello|yo|sup|howdy|good (morning|afternoon|evening))\b/.test(low) && low.length < 30){
+    SupremeConv.remember(q,'greet');
+    return roleTag + SupremeConv.pick('greet', [
+      'Hey — Signature Llama 2.0 here, the supreme build. Ask me anything: words from the live dictionary, math, or anywhere across the 37 sites.',
+      'Hello! I\u2019m the 2.0 supreme AI. I can define words straight out of the Signature Dictionary, do math, and route you through the whole network.',
+      'Hey there — supreme mode on. What do you want to know?'
+    ]);
+  }
+  if(/\bwho are you\b|\byour name\b|\bwhat are you\b/.test(low)){
+    SupremeConv.remember(q,'identity');
+    return roleTag + SupremeConv.pick('identity', [
+      'I\u2019m Signature Llama 2.0 — the supreme universal build. My duties: define any word from the live Signature Dictionary, solve math through the Calculator engine, lock into hashtag roles like #Task-Chef, and route you to any of the 37 Signature sites and archives.',
+      'Signature Llama 2.0, the supreme build, at your service. I look words up live, calculate, take roles, and know the whole network. For full open-ended reasoning, the Industry Standard cloud path on the Llama site is the deeper brain.'
+    ]);
+  }
+  if(/\bare you\b[^.?!]{0,50}\b(ai|a\.?i\.?|artificial intelligence|real|conscious|alive|sentient|robot|bot)\b/.test(low) || /\btesting you\b/.test(low) || /\bjust (a )?copy/.test(low)){
+    SupremeConv.remember(q,'testchallenge');
+    return roleTag + SupremeConv.pick('testchallenge', [
+      'Straight answer: I\u2019m the on-device conversational layer of Signature Llama 2.0 — I understand your words well enough to look things up and hold a conversation, but I\u2019m not the trained 4M model itself and I\u2019m not conscious. The full reasoning brain is the Industry Standard path (free key) on the Signature Llama site.',
+      'Honest: this chat runs on your device — a real conversational engine with live dictionary lookup, not canned lines, but not a giant reasoning model either, and not conscious. The Industry Standard cloud Llama is the one that reasons like a full AI.'
+    ]);
+  }
+  if(/\b(thanks|thank you|thx|appreciated)\b/.test(low)){
+    SupremeConv.remember(q,'thanks');
+    return roleTag + SupremeConv.pick('thanks', ['Anytime — that\u2019s what the supreme build is for.', 'You got it. Ask me anything else.', 'Happy to help.']);
+  }
+  if(/\b(bye|goodbye|see you|later)\b/.test(low) && low.length < 25){
+    SupremeConv.remember(q,'bye');
+    return roleTag + SupremeConv.pick('bye', ['Later — I\u2019ll be right here when you need the supreme brain.', 'Goodbye for now.']);
+  }
+  /* --- live dictionary lookup: "define X", "what does X mean", "meaning of X" --- */
+  var dm = low.match(/\bdefine\s+([a-z][a-z\-']*)/) || low.match(/\bmeaning of\s+([a-z][a-z\-']*)/) ||
+           low.match(/\bwhat does\s+([a-z][a-z\-']*)\s+mean\b/) || low.match(/\bdefinition of\s+([a-z][a-z\-']*)/);
+  if(dm){
+    var w = dm[1];
+    SupremeConv.remember(q,'define:'+w);
+    return dictLookup(w).then(function(row){
+      if(row){
+        var pos = row[1] ? ' ('+row[1]+')' : '';
+        var pron = row[2] ? ' — say it: '+row[2] : '';
+        return '📖 ' + roleTag + row[0] + pos + pron + '\n' + (row[3] || 'Definition on file.') +
+          '\n\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';
+      }
+      return '📖 ' + roleTag + 'I looked through the live Signature Dictionary and couldn\u2019t find \u201c'+w+'\u201d. Check the spelling, or try the dictionary site directly:\n[[LINK:' + DICT_BASE + '|Open the Signature Dictionary →]]';
+    });
+  }
+  /* --- single word query: treat as define --- */
+  if(/^[a-z][a-z\-']{1,30}$/.test(low)){
+    SupremeConv.remember(q,'define:'+low);
+    return dictLookup(low).then(function(row){
+      if(row){
+        var pos = row[1] ? ' ('+row[1]+')' : '';
+        var pron = row[2] ? ' — say it: '+row[2] : '';
+        return '📖 ' + roleTag + row[0] + pos + pron + '\n' + (row[3] || 'Definition on file.') +
+          '\n\n[[LINK:' + DICT_BASE + '/?w=' + encodeURIComponent(row[0]) + '|Open in the Signature Dictionary →]]';
+      }
+      return null; /* fall through to fallback below */
+    }).then(function(a){
+      if(a) return a;
+      return roleTag + SupremeConv.pick('fallback', [
+        'I didn\u2019t catch that one — I looked it up and it\u2019s not in the dictionary either. Try \u201cdefine serendipity\u201d, a math question like 12*8+3, or ask me who I am.',
+        'Hmm, that one slipped past me. I\u2019m best at: defining words (try \u201cdefine <word>\u201d), math, and pointing you around the 37 sites.',
+        'Not sure what you meant there. Give me a word to define, some math, or a hashtag role like #Task-Chef.'
+      ]);
+    });
+  }
+  /* --- archive routing: honest pointers with real links --- */
+  var NET = 'https://justinahiggins614-cmyk.github.io';
+  if(/\bpatent\b/.test(low)){ SupremeConv.remember(q,'route:patent');
+    return roleTag + 'Patents live in two places:\n[[LINK:'+NET+'/cyber-patent-catalog|Globally Rejustered Patent Catalog →]] (harvested public records)\n[[LINK:'+NET+'/signature-one-archive/specs.html|Signature Spec Catalog →]] (your original drafts)';
+  }
+  if(/\bwiki\b|\bhistory of\b|\bwho (was|is)\b/.test(low)){ SupremeConv.remember(q,'route:wiki');
+    return roleTag + 'For deep articles try:\n[[LINK:'+NET+'/jah-wiki|JAH Wiki →]]\n[[LINK:'+NET+'/jah-n-wiki-leaks|JAH-N Wiki Leaks →]] (the classified-dossier side)';
+  }
+  if(/\bsong|music\b/.test(low)){ SupremeConv.remember(q,'route:music');
+    return roleTag + 'Music lives at [[LINK:'+NET+'/signature-ai-song-maker|Signature Music Studio →]] — full song generator in there.';
+  }
+  /* --- honest fallback: never canned, never word salad --- */
+  SupremeConv.remember(q,'fallback');
+  return roleTag + SupremeConv.pick('fallback', [
+    'I want to give you a real answer, not a guess — I\u2019m best at defining words (try \u201cdefine <word>\u201d), math like 12*8+3, and routing you across the 37 sites. For open-ended reasoning, the Industry Standard cloud path on the Signature Llama site is the deeper brain.',
+    'That\u2019s outside what I can answer on-device. I do words, math, roles, and network routing for real — everything else, the full cloud Llama handles.',
+    'I don\u2019t have a real answer for that one, and I\u2019d rather say so than make one up. Try a word, some math, or ask me what I can do.'
+  ]);
+}
+function renderAns(out, a){
+  var h = esc(a).replace(/\n/g,'<br>');
+  h = h.replace(/\[\[LINK:([^|]+)\|([^\]]+)\]\]/g, '<a href="$1" target="_blank" rel="noopener" style="color:#ffb300;font-weight:bold;">$2</a>');
+  out.innerHTML = h;
+}
+function askLlama(){
+  var q = document.getElementById('askq').value.trim();
+  var out = document.getElementById('askout');
+  if(!q){ out.textContent = 'Type a question first.'; return; }
+  out.textContent = '🦠 thinking — routing across the ecosystem…';
+  try{
+    var ans = supremeAnswer(q);
+    if(ans && typeof ans.then === 'function'){
+      out.textContent = '📖 looking it up in the live Signature Dictionary…';
+      ans.then(function(a){ renderAns(out, a); },
+               function(){ out.textContent = 'Hmm, that lookup hiccuped. Try again.'; });
+    } else {
+      setTimeout(function(){ renderAns(out, ans); }, 350);
+    }
+  }catch(e){ out.textContent = 'Hmm, that one slipped past me. Try asking another way.'; }
+}
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
   var MODEL = 'llama-3.3-70b-versatile';
@@ -139,13 +283,17 @@ var ApexAI = (function () {
 
   function sysPrompt() {
     return 'You are The Signature AI, the flagship Signature-version AI, built by Justin Addam Higgins (JAH). ' +
-      'You are warm, direct, and honest. You have real tools: define_word (the live Signature Dictionary with all its words), ' +
-      'calculate (safe math), wikipedia (web knowledge), route_site (the 39-site Signature network). ' +
-      'Use tools whenever the user asks about words, math, facts, or the network — never guess what a tool can answer. ' +
-      'Keep answers short and plain-spoken like a chat, not essays. Never claim to be Muse or Meta\'s model. ' +
-      'Everything is free forever; nothing here costs the user money.';
+      'You are a top-tier assistant: reason carefully, be direct and warm, and never pad. ' +
+      'TOOLS — use them proactively, never guess what a tool can answer: ' +
+      'define_word (the live Signature Dictionary — every word lookup goes here), ' +
+      'calculate (ALL math — never do arithmetic yourself), ' +
+      'wikipedia (web knowledge: people, places, history, science — use for factual questions), ' +
+      'route_site (pointing users at the 39-site Signature network). ' +
+      'You may chain multiple tool calls to fully answer. After tool results arrive, synthesize a clean final answer — ' +
+      'quote the facts you found, keep it tight. If tools fail, say so plainly and answer from what you know, labeled as such. ' +
+      'Format for chat: short paragraphs, bullets for lists, no essays unless asked. ' +
+      'Never claim to be Muse or Meta\u2019s model. Everything is free forever; nothing here costs the user money.';
   }
-
   function safeCalc(expr) {
     try {
       var e = String(expr).replace(/\^/g, '**');
@@ -157,6 +305,7 @@ var ApexAI = (function () {
 
   function runTool(name, args) {
     args = args || {};
+    try { ApexAI.onTool && ApexAI.onTool(name, args); } catch (e) {}
     if (name === 'define_word') {
       return dictLookup(args.word).then(function (row) {
         if (row) return row[0] + (row[1] ? ' (' + row[1] + ')' : '') + ': ' + (row[3] || 'on file') + ' [Signature Dictionary ' + row[4] + ']';
@@ -216,7 +365,7 @@ var ApexAI = (function () {
     function loop() {
       return groq(messages, TOOLS).then(function (data) {
         var msg = data.choices[0].message;
-        if (msg.tool_calls && msg.tool_calls.length && rounds < 5) {
+        if (msg.tool_calls && msg.tool_calls.length && rounds < 8) {
           rounds++;
           messages.push(msg);
           var chain = Promise.resolve();
@@ -240,7 +389,23 @@ var ApexAI = (function () {
     return loop();
   }
 
+  function complete(messages, maxTokens) {
+    return fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ApexAI.key() },
+      body: JSON.stringify({ model: MODEL, messages: messages, temperature: 0.6, max_tokens: maxTokens || 900 })
+    }).then(function (r) {
+      if (r.status === 401) throw new Error('badkey');
+      if (r.status === 429) throw new Error('ratelimit');
+      if (!r.ok) throw new Error('api' + r.status);
+      return r.json();
+    }, function () { throw new Error('netfail'); })
+    .then(function (d) { return d.choices[0].message.content || ''; });
+  }
+
   return {
+    onTool: null,
+    complete: complete,
     key: function () { try { return (localStorage.getItem(KEY_NAME) || '').trim(); } catch (e) { return ''; } },
     hasKey: function () { return this.key().length > 10; },
     saveKey: function (k) { try { localStorage.setItem(KEY_NAME, String(k).trim()); } catch (e) {} },
@@ -250,48 +415,195 @@ var ApexAI = (function () {
     errText: errText
   };
 })();
-/* --- page wiring --- */
-document.getElementById('askq').addEventListener('keydown', function(e){ if(e.key==='Enter') askLlama(); });
-function apexSay(who, text){
-  var log = document.getElementById('apexlog');
-  var d = document.createElement('div');
-  d.className = 'msg ' + (who === 'u' ? 'u' : 'a');
-  d.innerHTML = '<div class="who">' + (who === 'u' ? 'You' : '&#11042; Apex AI') + '</div>' + esc(text).replace(/\n/g, '<br>');
-  log.appendChild(d); log.scrollTop = log.scrollHeight;
+/* ================= page: convo store ================= */
+var LS_CONVOS='sig_convos_v1', LS_ACTIVE='sig_active_v1';
+function loadConvos(){ try{ return JSON.parse(localStorage.getItem(LS_CONVOS)||'[]'); }catch(e){ return []; } }
+function saveConvos(c){ try{ localStorage.setItem(LS_CONVOS, JSON.stringify(c.slice(0,60))); }catch(e){} }
+function activeId(){ try{ return localStorage.getItem(LS_ACTIVE); }catch(e){ return null; } }
+function setActiveId(id){ try{ localStorage.setItem(LS_ACTIVE, id||''); }catch(e){} }
+function getActive(){ var cs=loadConvos(), id=activeId(); for(var i=0;i<cs.length;i++) if(cs[i].id===id) return cs[i]; return null; }
+function putActive(c){ var cs=loadConvos(), f=false; for(var i=0;i<cs.length;i++) if(cs[i].id===c.id){ cs[i]=c; f=true; } if(!f) cs.unshift(c); saveConvos(cs); }
+function uid(){ return 'c'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(t){ try{ return new Date(t).toLocaleString(); }catch(e){ return ''; } }
+function autoTitle(q){ var w=String(q).trim().split(/\s+/).slice(0,7).join(' '); return w.length>60?w.slice(0,60)+'…':w; }
+
+/* ================= page: feed ================= */
+function bubble(who, text, cls){
+  var feed=document.getElementById('feed');
+  var d=document.createElement('div');
+  d.className='msg '+(who==='u'?'u':who==='sys'?'sys':'a')+(cls?' '+cls:'');
+  d.innerHTML='<div class="who">'+(who==='u'?'You':who==='sys'?'&#10033; System':'&#11042; Apex AI')+'</div>'+esc(text).replace(/\n/g,'<br>');
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight; return d;
 }
-function apexRefresh(){
-  var has = ApexAI.hasKey();
-  document.getElementById('apex-setup').style.display = has ? 'none' : 'block';
-  document.getElementById('apex-chat').style.display = has ? 'block' : 'none';
-  if (has && !document.getElementById('apexlog').children.length)
-    apexSay('a', 'Apex online. I can reason, define words from your live dictionary, calculate, pull web knowledge from Wikipedia, and route across all 39 Signature sites. What should I do?');
+function toolNote(text){
+  var feed=document.getElementById('feed');
+  var d=document.createElement('div'); d.className='msg toolnote'; d.textContent='⚙ '+text;
+  feed.appendChild(d); feed.scrollTop=feed.scrollHeight; return d;
 }
-function apexSaveKey(){
-  var k = document.getElementById('apexkey').value.trim();
-  var m = document.getElementById('apex-keymsg');
-  if (!/^gsk_[A-Za-z0-9]{10,}$/.test(k)) { m.textContent = 'That doesn\u2019t look like a Groq key (starts with gsk_). Check the copy.'; return; }
-  ApexAI.saveKey(k);
-  document.getElementById('apexkey').value = '';
-  apexRefresh();
+function renderFeed(){
+  var feed=document.getElementById('feed'); feed.innerHTML='';
+  var c=getActive();
+  if(!c || !c.messages.length){
+    bubble('sys','Welcome to The Signature AI. '+(ApexAI.hasKey()?'Apex is online — ask anything.':'Add your free key in ⚙ Settings to wake Apex, or just talk — Standard answers below in Settings.'));
+    return;
+  }
+  c.messages.forEach(function(m){ bubble(m.role==='user'?'u':'a', m.content); });
 }
-function apexAsk(){
-  var inp = document.getElementById('apexq');
-  var q = inp.value.trim();
-  if (!q) return;
-  inp.value = '';
-  apexSay('u', q);
-  apexSay('a', '⏳ thinking \u2014 reasoning and using tools\u2026');
-  var log = document.getElementById('apexlog');
-  ApexAI.ask(q).then(function (a) {
-    log.removeChild(log.lastChild);
-    apexSay('a', a);
-  }).catch(function (e) {
-    log.removeChild(log.lastChild);
-    apexSay('a', ApexAI.errText(e) + ' Your key stays on your phone.');
+function newChat(){
+  var c={id:uid(), title:'New chat', created:Date.now(), updated:Date.now(), messages:[], filed:false, doc:null};
+  putActive(c); setActiveId(c.id); renderFeed(); closeDrawers();
+}
+function openConvo(id){ setActiveId(id); renderFeed(); closeDrawers(); }
+function deleteConvo(id){
+  var cs=loadConvos().filter(function(c){ return c.id!==id; });
+  saveConvos(cs); if(activeId()===id){ setActiveId(null); }
+  renderHist(); renderFeed();
+}
+
+/* ================= page: history drawer ================= */
+function toggleDrawer(which, open){
+  closeDrawers();
+  if(open){ document.getElementById(which==='hist'?'d-hist':'d-set').classList.add('open');
+    document.getElementById('scrim').classList.add('on');
+    if(which==='hist') renderHist(); if(which==='set') renderKeyBox(); }
+}
+function closeDrawers(){
+  document.getElementById('d-hist').classList.remove('open');
+  document.getElementById('d-set').classList.remove('open');
+  document.getElementById('scrim').classList.remove('on');
+}
+function renderHist(){
+  var box=document.getElementById('histlist'); var cs=loadConvos();
+  if(!cs.length){ box.innerHTML='<p class="note">Nothing filed yet. Chat, then press &#10033; Formalize &amp; Save — or just keep talking, transcripts file themselves.</p>'; return; }
+  box.innerHTML='';
+  cs.forEach(function(c){
+    var d=document.createElement('div'); d.className='hitem';
+    d.innerHTML='<div class="t">'+esc(c.title)+'</div><div class="m">'+fmtDate(c.updated)+' · '+c.messages.length+' messages'+(c.doc?' · &#10033; filed':'')+'</div>'+
+      '<div class="ops"><button class="tbtn" data-op="open">Open</button>'+
+      (c.doc?'<button class="tbtn" data-op="doc">Read file</button>':'<button class="tbtn gold" data-op="form">Formalize</button>')+
+      '<button class="tbtn" data-op="del">Delete</button></div>';
+    d.querySelector('[data-op="open"]').onclick=function(){ openConvo(c.id); };
+    d.querySelector('[data-op="del"]').onclick=function(e){ e.stopPropagation(); deleteConvo(c.id); };
+    var f=d.querySelector('[data-op="form"]'); if(f) f.onclick=function(e){ e.stopPropagation(); formalizeConvo(c.id); };
+    var rd=d.querySelector('[data-op="doc"]'); if(rd) rd.onclick=function(e){ e.stopPropagation(); readDoc(c.id); };
+    box.appendChild(d);
   });
 }
-document.getElementById('apexq').addEventListener('keydown', function(e){ if(e.key==='Enter') apexAsk(); });
-apexRefresh();
+function readDoc(id){
+  var cs=loadConvos();
+  for(var i=0;i<cs.length;i++) if(cs[i].id===id && cs[i].doc){
+    closeDrawers();
+    var feed=document.getElementById('feed'); feed.innerHTML='';
+    bubble('sys','Filed document — '+cs[i].doc.title+' (updated '+fmtDate(cs[i].doc.updated)+')');
+    var d=document.createElement('div'); d.className='msg a';
+    d.innerHTML='<div class="who">&#10033; FILED DOCUMENT</div><div class="docview">'+esc(cs[i].doc.body)+'</div>';
+    feed.appendChild(d); feed.scrollTop=feed.scrollHeight; return;
+  }
+}
+
+/* ================= page: send (Apex) ================= */
+var TOOLNAMES={define_word:'dictionary',calculate:'calculator',wikipedia:'Wikipedia',route_site:'network'};
+ApexAI.onTool=function(name){ toolNote('using '+ (TOOLNAMES[name]||name) +'…'); };
+function needKey(){
+  if(ApexAI.hasKey()) return false;
+  bubble('sys','Apex needs your free key first — open ⚙ Settings, paste it, Activate. (30 seconds, free, stays on your phone.)');
+  return true;
+}
+function sendMsg(){
+  var inp=document.getElementById('qin'); var q=inp.value.trim(); if(!q) return;
+  if(needKey()) return;
+  inp.value='';
+  var c=getActive();
+  if(!c){ c={id:uid(),title:autoTitle(q),created:Date.now(),updated:Date.now(),messages:[],filed:false,doc:null}; setActiveId(c.id); }
+  if(c.messages.length===0) c.title=autoTitle(q);
+  c.messages.push({role:'user',content:q}); c.updated=Date.now(); putActive(c);
+  bubble('u',q);
+  var thinking=bubble('a','⏳ thinking…');
+  ApexAI.ask(q).then(function(a){
+    thinking.remove();
+    bubble('a',a);
+    var cc=getActive(); cc.messages.push({role:'assistant',content:a}); cc.updated=Date.now(); putActive(cc);
+    if(cc.doc) silentRefine(cc.id); /* keep the filed doc fresh behind the scenes */
+  }).catch(function(e){
+    thinking.remove();
+    bubble('a', ApexAI.errText(e)+' Your key stays on your phone.');
+  });
+}
+document.getElementById('qin').addEventListener('keydown',function(e){ if(e.key==='Enter') sendMsg(); });
+document.getElementById('qsend').addEventListener('click',sendMsg);
+
+/* ================= page: formalize & file ================= */
+function transcript(c){
+  return c.messages.map(function(m){ return (m.role==='user'?'User: ':'Apex: ')+m.content; }).join('\n\n');
+}
+function formalizePrompt(c){
+  return 'File this conversation as a polished project document. Read the transcript, then output exactly:\n'+
+    '# <short title>\n\n## Summary\n(2-4 sentences)\n\n## Key findings\n(bullets, everything important)\n\n'+
+    '## Polished notes\n(a clean complete writeup the user can keep)\n\nTranscript:\n'+transcript(c).slice(0,12000);
+}
+function formalizeConvo(id){
+  if(needKey()) return;
+  var cs=loadConvos(), c=null;
+  for(var i=0;i<cs.length;i++) if(cs[i].id===id) c=cs[i];
+  if(!c || !c.messages.length){ bubble('sys','Nothing to formalize yet — chat first.'); return; }
+  bubble('sys','⏳ Formalizing "'+c.title+'" into a polished filed document…');
+  ApexAI.complete([{role:'user',content:formalizePrompt(c)}], 1200).then(function(doc){
+    var title=(doc.match(/^#\s*(.+)$/m)||[])[1]||c.title;
+    c.title=String(title).slice(0,80); c.filed=true;
+    c.doc={title:c.title, body:doc, updated:Date.now()}; c.updated=Date.now();
+    putActive(c); renderHist();
+    bubble('sys','\u2733 Filed: "'+c.title+'" — in History, re-filed fresh after every exchange.');
+  }).catch(function(e){ bubble('sys', ApexAI.errText(e)); });
+}
+function formalizeActive(){ var c=getActive(); if(!c){ bubble('sys','Start chatting first — then I\u2019ll formalize it.'); return; } formalizeConvo(c.id); }
+function silentRefine(id){
+  var cs=loadConvos(), c=null;
+  for(var i=0;i<cs.length;i++) if(cs[i].id===id) c=cs[i];
+  if(!c || !c.doc) return;
+  ApexAI.complete([{role:'user',content:formalizePrompt(c)}], 1200).then(function(doc){
+    var cs2=loadConvos();
+    for(var i=0;i<cs2.length;i++) if(cs2[i].id===id && cs2[i].doc){
+      cs2[i].doc.body=doc; cs2[i].doc.updated=Date.now(); cs2[i].updated=Date.now(); saveConvos(cs2);
+    }
+  }).catch(function(){});
+}
+
+/* ================= page: settings (key + standard) ================= */
+function renderKeyBox(){
+  var s=document.getElementById('keystate');
+  s.textContent=ApexAI.hasKey()?'\u2733 Apex key on file — Apex is online.':'No key yet — Apex sleeps until you add one.';
+  document.getElementById('keybox').style.display='';
+}
+function saveKey(){
+  var k=document.getElementById('apikey').value.trim();
+  var s=document.getElementById('keystate');
+  if(!/^gsk_[A-Za-z0-9]{10,}$/.test(k)){ s.textContent='That doesn\u2019t look like a Groq key (starts with gsk_).'; return; }
+  ApexAI.saveKey(k); document.getElementById('apikey').value='';
+  renderKeyBox(); renderFeed();
+  bubble('sys','\u2733 Apex activated. Talk to me.');
+}
+var LOCKED_ROLE=null;
+function stdRole(t){ LOCKED_ROLE=t; }
+function stdAsk(){
+  var q=document.getElementById('stdq').value.trim(); if(!q) return;
+  document.getElementById('stdq').value='';
+  var out=document.getElementById('stdout'); out.textContent='…';
+  try{
+    var a=supremeAnswer(q);
+    if(a&&a.then){ out.textContent='looking it up…'; a.then(function(x){ renderStd(out,x); },function(){ out.textContent='lookup hiccuped.'; }); }
+    else setTimeout(function(){ renderStd(out,a); },200);
+  }catch(e){ out.textContent='try another way.'; }
+}
+function renderStd(out,a){
+  var h=esc(a).replace(/\n/g,'<br>');
+  h=h.replace(/\[\[LINK:([^|]+)\|([^\]]+)\]\]/g,'<a href="$1" target="_blank" rel="noopener">$2</a>');
+  out.innerHTML=h;
+}
+document.getElementById('stdq').addEventListener('keydown',function(e){ if(e.key==='Enter') stdAsk(); });
+
+renderKeyBox(); renderFeed();
+
 </script>
 </body>
 </html>
