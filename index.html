@@ -89,8 +89,19 @@ header.topbar h1 .ast{color:#ffb300}
 <aside class="drawer right" id="d-set" aria-label="Settings and tools">
 <h3>&#9881; Settings &amp; Tools</h3>
 <div class="dbody">
+<div class="field" id="backendbox">
+<label>SIGNATURE BACKEND (recommended — one backend serves everyone, no keys)</label>
+<input id="backendurl" type="text" class="tin" placeholder="https://signature-apex.YOU.workers.dev" autocomplete="off">
+<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" onclick="saveBackend()">Save backend</button>
+<button class="btn ghost" onclick="ApexAI.setBackend('','');renderKeyBox();">Remove</button>
+</div>
+<input id="sitetoken" type="password" class="tin" placeholder="SITE_TOKEN (as set in Worker)" autocomplete="off" style="margin-top:8px">
+<p class="note" id="backendstate"></p>
+<p class="note">Free Cloudflare Worker holds your key as an encrypted secret — users never see it. Setup file: <b>backend/worker.js</b> in the vault.</p>
+</div>
 <div class="field" id="keybox">
-<label>APEX KEY (your free Groq key — stays on this phone only)</label>
+<label>APEX KEY (fallback — your free Groq key, stays on this phone only)</label>
 <input id="apikey" type="password" class="tin" placeholder="gsk_..." autocomplete="off">
 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn" onclick="saveKey()">Activate Apex</button>
@@ -273,9 +284,14 @@ function askLlama(){
 }
 /* Apex AI engine 2.0 - model auto-detect, tool calling, key on device only. */
 /* Apex AI engine 2.0 - model auto-detect, tool calling, key on device only. */
+/* Apex AI engine 2.0 - backend mode + key mode, model auto-detect. */
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
   var MODEL_KEY = 'sig_apex_model';
+  var BACKEND_KEY = 'sig_apex_backend';
+  var TOKEN_KEY = 'sig_apex_site_token';
+  var DEFAULT_BACKEND = ''; /* baked in after he deploys the worker */
+  var DEFAULT_SITE_TOKEN = '';
   var MODEL = null; /* resolved at runtime */
   var PREFER = ['llama-3.3-70b-versatile','llama-3.1-70b-versatile','openai/gpt-oss-120b',
     'qwen/qwen3-32b','qwen/qwen3.8-27b','meta-llama/llama-4-scout-17b-16e-instruct',
@@ -385,7 +401,18 @@ var ApexAI = (function () {
     return Promise.resolve('unknown tool: ' + name);
   }
 
+  function backendCall(messages, tools){
+    return fetch(ApexAI.backend().replace(/\/$/,'')+'/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Site-Token':ApexAI.siteToken()},
+      body:JSON.stringify({messages:messages,tools:tools||undefined,model:'auto'})
+    }).then(function(r){ return r.json().then(function(d){
+        if(!r.ok||d.error) throw new Error(d.error||('api'+r.status));
+        return d;
+      }); },function(){ throw new Error('netfail'); });
+  }
   function groq(messages, tools, retried) {
+    if(ApexAI.useBackend()) return backendCall(messages, tools);
     function doCall(model){
       MODEL=model;
       return fetch(API, {
@@ -410,6 +437,8 @@ var ApexAI = (function () {
     var m = (e && e.message) || '';
     if (m === 'badkey') return 'That key was rejected by Groq. Check the copy at console.groq.com/keys, or press Forget key and try a fresh one.';
     if (m === 'ratelimit') return 'Groq rate limit hit (free tier busy). Wait a minute and try again — your key is fine.';
+    if (m === 'forbidden') return 'Backend refused the request. The site token may be wrong — check Settings.';
+    if (m === 'no_key') return 'The backend has no key configured yet — the owner needs to add it in the Worker settings.';
     if (m.indexOf('api') === 0) return 'Groq returned error ' + m.slice(3) + '. Try again in a bit.';
     return 'Your phone could not reach Groq at all (connection blocked or offline). Check your connection — or try full Chrome instead of the Facebook in-app browser, which sometimes blocks API calls.';
   }
@@ -466,6 +495,10 @@ var ApexAI = (function () {
   return {
     onTool: null,
     complete: complete,
+    backend: function(){ try{ return (localStorage.getItem(BACKEND_KEY)||'').trim()||DEFAULT_BACKEND; }catch(e){ return DEFAULT_BACKEND; } },
+    useBackend: function(){ return this.backend().length>8; },
+    setBackend: function(u,t){ try{ localStorage.setItem(BACKEND_KEY,String(u||'').trim()); localStorage.setItem(TOKEN_KEY,String(t||'').trim()); }catch(e){} },
+    siteToken: function(){ try{ return (localStorage.getItem(TOKEN_KEY)||'').trim()||DEFAULT_SITE_TOKEN; }catch(e){ return DEFAULT_SITE_TOKEN; } },
     listModels: listModels,
     currentModel: function(){ return MODEL||storedModel(); },
     setModel: function(id){ try{ localStorage.setItem(MODEL_KEY, id); }catch(e){} MODEL=(id==='auto'?null:id); },
@@ -509,7 +542,7 @@ function renderFeed(){
   var feed=document.getElementById('feed'); feed.innerHTML='';
   var c=getActive();
   if(!c || !c.messages.length){
-    bubble('sys','Welcome to The Signature AI. '+(ApexAI.hasKey()?'Apex is online — ask anything.':'Add your free key in ⚙ Settings to wake Apex, or just talk — Standard answers below in Settings.'));
+    bubble('sys','Welcome to The Signature AI 2.0. '+((ApexAI.useBackend()||ApexAI.hasKey())?'Apex is online — ask anything.':'Wake Apex in ⚙ Settings (backend or free key). Standard 1.0 is one tap away, no key needed.'));
     return;
   }
   c.messages.forEach(function(m){ bubble(m.role==='user'?'u':'a', m.content); });
@@ -590,8 +623,8 @@ function readDoc(id){
 var TOOLNAMES={define_word:'dictionary',calculate:'calculator',wikipedia:'Wikipedia',route_site:'network'};
 ApexAI.onTool=function(name){ toolNote('using '+ (TOOLNAMES[name]||name) +'…'); };
 function needKey(){
-  if(ApexAI.hasKey()) return false;
-  bubble('sys','Apex needs your free key first — open ⚙ Settings, paste it, Activate. (30 seconds, free, stays on your phone.)');
+  if(ApexAI.useBackend()||ApexAI.hasKey()) return false;
+  bubble('sys','Apex needs a backend or your free key — open ⚙ Settings. Backend (recommended): one setup serves everyone, no keys. Key: 30 seconds, free, stays on your phone.');
   return true;
 }
 function sendMsg(){
@@ -656,8 +689,24 @@ function silentRefine(id){
 /* ================= page: settings (key + standard) ================= */
 function renderKeyBox(){
   var s=document.getElementById('keystate');
-  s.textContent=ApexAI.hasKey()?'\u2733 Apex key on file — Apex is online.':'No key yet — Apex sleeps until you add one.';
-  document.getElementById('keybox').style.display='';
+  var bs=document.getElementById('backendstate');
+  var bu=document.getElementById('backendurl');
+  if(ApexAI.useBackend()){
+    if(bs) bs.textContent='\u2733 Backend active: '+ApexAI.backend()+' — Apex serves everyone, no keys needed.';
+    if(bu) bu.value=ApexAI.backend();
+    if(s) s.textContent='Backend mode — key not needed.';
+  } else {
+    if(bs) bs.textContent='No backend set — add the Worker URL above, or use a personal key below.';
+    if(s) s.textContent=ApexAI.hasKey()?'\u2733 Apex key on file — Apex is online.':'No key yet — Apex sleeps until you add one.';
+  }
+}
+function saveBackend(){
+  var u=document.getElementById('backendurl').value.trim().replace(/\/$/,'');
+  if(!/^https:\/\//.test(u)){ document.getElementById('backendstate').textContent='Paste the full https URL of your Worker.'; return; }
+  var t=(document.getElementById('sitetoken')||{value:''}).value.trim();
+  ApexAI.setBackend(u,t);
+  renderKeyBox(); renderFeed();
+  bubble('sys','\u2733 Backend connected. Apex now serves everyone — no keys needed.');
 }
 function saveKey(){
   var k=document.getElementById('apikey').value.trim();

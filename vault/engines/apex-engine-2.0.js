@@ -4,6 +4,10 @@
 var ApexAI = (function () {
   var KEY_NAME = 'sig_apex_groq_key';
   var MODEL_KEY = 'sig_apex_model';
+  var BACKEND_KEY = 'sig_apex_backend';
+  var TOKEN_KEY = 'sig_apex_site_token';
+  var DEFAULT_BACKEND = ''; /* baked in after he deploys the worker */
+  var DEFAULT_SITE_TOKEN = '';
   var MODEL = null; /* resolved at runtime */
   var PREFER = ['llama-3.3-70b-versatile','llama-3.1-70b-versatile','openai/gpt-oss-120b',
     'qwen/qwen3-32b','qwen/qwen3.8-27b','meta-llama/llama-4-scout-17b-16e-instruct',
@@ -113,7 +117,18 @@ var ApexAI = (function () {
     return Promise.resolve('unknown tool: ' + name);
   }
 
+  function backendCall(messages, tools){
+    return fetch(ApexAI.backend().replace(/\/$/,'')+'/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Site-Token':ApexAI.siteToken()},
+      body:JSON.stringify({messages:messages,tools:tools||undefined,model:'auto'})
+    }).then(function(r){ return r.json().then(function(d){
+        if(!r.ok||d.error) throw new Error(d.error||('api'+r.status));
+        return d;
+      }); },function(){ throw new Error('netfail'); });
+  }
   function groq(messages, tools, retried) {
+    if(ApexAI.useBackend()) return backendCall(messages, tools);
     function doCall(model){
       MODEL=model;
       return fetch(API, {
@@ -138,6 +153,8 @@ var ApexAI = (function () {
     var m = (e && e.message) || '';
     if (m === 'badkey') return 'That key was rejected by Groq. Check the copy at console.groq.com/keys, or press Forget key and try a fresh one.';
     if (m === 'ratelimit') return 'Groq rate limit hit (free tier busy). Wait a minute and try again — your key is fine.';
+    if (m === 'forbidden') return 'Backend refused the request. The site token may be wrong — check Settings.';
+    if (m === 'no_key') return 'The backend has no key configured yet — the owner needs to add it in the Worker settings.';
     if (m.indexOf('api') === 0) return 'Groq returned error ' + m.slice(3) + '. Try again in a bit.';
     return 'Your phone could not reach Groq at all (connection blocked or offline). Check your connection — or try full Chrome instead of the Facebook in-app browser, which sometimes blocks API calls.';
   }
@@ -194,6 +211,10 @@ var ApexAI = (function () {
   return {
     onTool: null,
     complete: complete,
+    backend: function(){ try{ return (localStorage.getItem(BACKEND_KEY)||'').trim()||DEFAULT_BACKEND; }catch(e){ return DEFAULT_BACKEND; } },
+    useBackend: function(){ return this.backend().length>8; },
+    setBackend: function(u,t){ try{ localStorage.setItem(BACKEND_KEY,String(u||'').trim()); localStorage.setItem(TOKEN_KEY,String(t||'').trim()); }catch(e){} },
+    siteToken: function(){ try{ return (localStorage.getItem(TOKEN_KEY)||'').trim()||DEFAULT_SITE_TOKEN; }catch(e){ return DEFAULT_SITE_TOKEN; } },
     listModels: listModels,
     currentModel: function(){ return MODEL||storedModel(); },
     setModel: function(id){ try{ localStorage.setItem(MODEL_KEY, id); }catch(e){} MODEL=(id==='auto'?null:id); },
